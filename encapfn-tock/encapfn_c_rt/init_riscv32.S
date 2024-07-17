@@ -26,13 +26,16 @@
 .section .encapfn_init
 .globl encapfn_init
 encapfn_init:
-        /* Make sure all of the provided parameters are word-aligned: */
-        lw   t0, 0*4(a0)             /* src = encapfn_rtheader.data_flash */
-        andi t3, t0, 3
+        /* Make sure all of the provided parameters are word-aligned, but only
+	 * if there is actually any data to copy (otherwise the linker will
+	 * place them whereever): */
+        lw   t1, 1*4(a0)             /* remaining = encapfn_rtheader.data_size */
+	beqz t1, .Lzero_bss          /* short circuit if we don't have data to copy */
+        andi t3, t1, 3
         bnez t3, .Linit_error
 
-        lw   t1, 1*4(a0)             /* remaining = encapfn_rtheader.data_size */
-        andi t3, t1, 3
+        lw   t0, 0*4(a0)             /* src = encapfn_rtheader.data_flash */
+        andi t3, t0, 3
         bnez t3, .Linit_error
 
         lw   t2, 2*4(a0)             /* dest = encapfn_rtheader.data_ram */
@@ -65,7 +68,7 @@ encapfn_init:
 
 .Linit_done:
         li   a0, 0                   /* Report no error */
-        la   sp, _stack_top          /* Tell the runtime start the stack at _stack_top */
+        la   sp, _stack_top          /* Tell the runtime the location of _stack_top */
         ret
 
 .Linit_error:

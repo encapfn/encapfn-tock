@@ -1,7 +1,9 @@
 [workspace]
 members = [
     "encapfn-tock",
-    "demo/nrf52840dk",
+    "examples/demo",
+    "examples/boards/nrf52840dk",
+    "examples/boards/qemu_rv32_virt",
 ]
 resolver = "2"
 
@@ -11,17 +13,34 @@ authors = ["Leon Schuermann <leon@is.currently.online>"]
 edition = "2021"
 
 [workspace.dependencies]
-kernel = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
-nrf52840 = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
-nrf52840dk = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+# encapfn = { git = "https://github.com/encapfn/encapfn", rev = "825b6ff0a5ce840a89edd4ce03c79d47f5d39b07" }
+encapfn = { path = "../encapfn" }
+bindgen = { git = "https://github.com/encapfn/rust-bindgen", rev = "21a80825e38f15fd3581662310928ada108cef78" }
+
 capsules-core = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
 capsules-extra = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
 capsules-system = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
 components = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
-tock-tbf = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+kernel = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+nrf52840 = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+nrf52840dk = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+qemu_rv32_virt_chip = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
 rv32i = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+sifive = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+tock-tbf = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
 
-encapfn = { git = "https://github.com/encapfn/encapfn", rev = "825b6ff0a5ce840a89edd4ce03c79d47f5d39b07" }
+qemu_rv32_virt = { git = "https://github.com/lschuermann/tock", rev = "4d15c7156c7796519dc685e733401783fa2d6942" }
+
+[patch."https://github.com/lschuermann/tock"]
+capsules-core = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+capsules-extra = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+capsules-system = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+components = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+kernel = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+qemu_rv32_virt_chip = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+rv32i = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+sifive = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
+
 
 [profile.dev]
 panic = "abort"

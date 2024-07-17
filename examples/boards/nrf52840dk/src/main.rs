@@ -11,13 +11,9 @@
 #![deny(missing_docs)]
 
 use core::ptr::addr_of_mut;
-use kernel::component::Component;
 use kernel::debug;
-use kernel::hil::usb::Client;
 use kernel::platform::{KernelResources, SyscallDriverLookup};
-use kernel::static_init;
 use kernel::{capabilities, create_capability};
-use nrf52840::gpio::Pin;
 use nrf52840dk_lib::{self, PROCESSES};
 
 // State for loading and holding applications.
@@ -28,8 +24,6 @@ const FAULT_RESPONSE: capsules_system::process_policies::PanicFaultPolicy =
 struct Platform {
     base: nrf52840dk_lib::Platform,
 }
-
-const KEYBOARD_HID_DRIVER_NUM: usize = capsules_core::driver::NUM::KeyboardHid as usize;
 
 impl SyscallDriverLookup for Platform {
     fn with_driver<F, R>(&self, driver_num: usize, f: F) -> R
@@ -83,7 +77,7 @@ pub unsafe fn main() {
     let main_loop_capability = create_capability!(capabilities::MainLoopCapability);
 
     // Create the base board:
-    let (board_kernel, base_platform, chip, nrf52840_peripherals, _mux_alarm) =
+    let (board_kernel, base_platform, chip, _nrf52840_peripherals, _mux_alarm) =
         nrf52840dk_lib::start();
 
     //--------------------------------------------------------------------------

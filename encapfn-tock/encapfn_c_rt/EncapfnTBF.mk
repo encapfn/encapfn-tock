@@ -13,6 +13,11 @@ ifeq (,$(EF_LAYOUT_LD))
   $(error Requires EF_LAYOUT_LD to be set)
 endif
 
+ifeq (,$(EF_TARGET))
+  $(error Requires EF_TARGET to be set)
+endif
+
+
 # Set defaults:
 BUILDDIR ?= build
 
@@ -44,22 +49,22 @@ TOOLCHAIN_cortexm = arm-none-eabi
 # ---------- TARGET TOOLCHAIN SELECTION ----------------------------------------
 
 # EF target "compression", for when compilers support multiple archs.
-ifeq ($(EF_TARGET),rv32i)
-  EF_TARGET := rv32i
+ifeq ($(EF_ARCH),rv32i)
+  EF_ARCH := rv32i
   EF_RV32I_MARCH := rv32i
-else ifeq ($(EF_TARGET),rv32imc)
-  EF_TARGET := rv32i
+else ifeq ($(EF_ARCH),rv32imc)
+  EF_ARCH := rv32i
   EF_RV32I_MARCH := rv32imc
-else ifeq ($(EF_TARGET),rv32imac)
-  EF_TARGET := rv32i
+else ifeq ($(EF_ARCH),rv32imac)
+  EF_ARCH := rv32i
   EF_RV32I_MARCH := rv32imac
-else ifeq ($(EF_TARGET),cortexm4)
+else ifeq ($(EF_ARCH),cortexm4)
   # Nothing to set.
 else
-  $(error Unknown EF_TARGET)
+  $(error Unknown EF_ARCH)
 endif
 
-ifeq ($(EF_TARGET),rv32i)
+ifeq ($(EF_ARCH),rv32i)
   CC := $(TOOLCHAIN_rv32i)-gcc
   CXX := $(TOOLCHAIN_rv32i)-g++
   AS := $(TOOLCHAIN_rv32i)-as
@@ -72,7 +77,7 @@ ifeq ($(EF_TARGET),rv32i)
   LDFLAGS := -melf32lriscv
   INIT_RV32I_S := $(EF_TOCK_BASEDIR)/encapfn_c_rt/init_riscv32.S
   INIT_S := $(INIT_RV32I_S)
-else ifeq ($(EF_TARGET),cortexm4)
+else ifeq ($(EF_ARCH),cortexm4)
   CC := $(TOOLCHAIN_cortexm)-gcc
   CXX := $(TOOLCHAIN_cortexm)-g++
   AS := $(TOOLCHAIN_cortexm)-as

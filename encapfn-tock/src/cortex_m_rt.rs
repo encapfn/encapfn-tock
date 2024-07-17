@@ -7,7 +7,7 @@ use kernel::platform::mpu::{self, MPU};
 
 use encapfn::abi::calling_convention::Stacked;
 use encapfn::abi::calling_convention::{AREG0, AREG1, AREG2, AREG3, AREG4, AREG5, AREG6, AREG7};
-use encapfn::abi::rv32i_c::Rv32iCABI;
+use encapfn::abi::armv7m_c::ArmV7MCABI;
 use encapfn::branding::EFID;
 use encapfn::rt::rv32i_c::{Rv32iCBaseRt, Rv32iCInvokeRes, Rv32iCRt};
 use encapfn::rt::EncapfnRt;

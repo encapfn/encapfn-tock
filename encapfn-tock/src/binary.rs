@@ -1,8 +1,27 @@
+use crate::TockEFError;
+
+// Word offsets:
+pub const ENCAPFN_HEADER_MAGIC_WOFFSET: usize = 0;
+pub const ENCAPFN_HEADER_RTHDR_PTR_WOFFSET: usize = 1;
+pub const ENCAPFN_HEADER_INIT_PTR_WOFFSET: usize = 2;
+pub const ENCAPFN_HEADER_FNTAB_PTR_WOFFSET: usize = 3;
+pub const ENCAPFN_HEADER_FNTAB_LEN_WOFFSET: usize = 4;
+pub const ENCAPFN_HEADER_WLEN: usize = 5;
+pub const ENCAPFN_HEADER_MAGIC: u32 = 0x454E4350;
+
 #[derive(Copy, Clone, Debug)]
 pub struct EncapfnBinary {
     pub tbf_start: Option<*const ()>,
     pub binary_start: *const (),
     pub binary_length: usize,
+}
+
+#[derive(Copy, Clone, Debug)]
+pub struct EncapfnBinaryParsed {
+    pub rthdr_addr: *const (),
+    pub init_addr: *const (),
+    pub fntab_addr: *const (),
+    pub fntab_length: usize,
 }
 
 impl EncapfnBinary {
@@ -94,4 +113,135 @@ impl EncapfnBinary {
             };
         }
     }
+
+    pub fn parse(&self) -> Result<EncapfnBinaryParsed, TockEFError> {
+        // Each Encapsulated Functions binary must start with a header indicating
+        // relevant data to the loader (Tock). Check that the binary can at
+        // least fit the header, ensure that the magic bytes match, and perform
+        // other sanity checks.
+        //
+        // Encapsulated Functions binary header layout:
+        //
+        // 0             2             4             6             8
+        // +---------------------------+---------------------------+
+        // | 0x454E4350 (ENCP) MAGIC   | Runtime Header Offset     |
+        // +---------------------------+---------------------------+
+        // | `init` Function Offset    | Function Table Offset     |
+        // +---------------------------+---------------------------+
+        // | Function Table Length (in pointers)
+        // +---------------------------+
+        //
+        // We will try to load these sections into the provided RAM region, with
+        // a layout as follows:
+        //
+        // +---------------------------+ <- `ram_region_start`
+        // | Loader-initialized data   | -\
+        // | - (optional) padding      |  |
+        // | - .data                   |  |
+        // | - .bss                    |  |
+        // +---------------------------+  |
+        // | Rust "remote memory"    | |  |
+        // | stack allocator         | |  |
+        // |                         v |  |- R/W permissions for foreign code
+        // +---------------------------+  |
+        // | Return trampoline stack   |  |
+        // | frame                     |  |
+        // +---------------------------+  |
+        // | Encapsulated functions  | |  |
+        // | service stack           | |  |
+        // |                         v | -/
+        // +---------------------------+ <- `ram_region_start` + `ram_region_len`
+        //
+        // The entire Encapsulated Functions binary will further be made
+        // available with read-execute permissions.
+
+        // Make sure we have at least enough data to parse the header:
+        if self.binary_length < ENCAPFN_HEADER_WLEN * core::mem::size_of::<u32>() {
+            return Err(TockEFError::BinaryLengthInvalid {
+		min_expected: ENCAPFN_HEADER_WLEN * core::mem::size_of::<u32>(),
+		actual: self.binary_length,
+		desc: "Required space for the EF header",
+	    });
+        }
+
+        // We require the Encapsulated Functions header to be aligned to a
+        // word-boundary, such that we can create a u32-slice to it and support
+        // efficient loads.
+        if self.binary_start as usize % core::mem::align_of::<u32>() != 0 {
+	    return Err(TockEFError::BinaryAlignError {
+		expected: core::mem::align_of::<u32>(),
+		actual: self.binary_start as usize % core::mem::align_of::<u32>(),
+	    });
+	}
+
+        // We generally try to avoid retaining Rust slices to the containerized
+        // service binary (to avoid unsoundness, in case this memory should
+        // change). However, for parsing the header, we can create an ephemeral
+        // slice given that we verified the length:
+        let header_slice = unsafe {
+            core::slice::from_raw_parts(self.binary_start as *const u32, ENCAPFN_HEADER_WLEN) };
+
+        // Read the header fields in native endianness. First, check the magic:
+        if header_slice[ENCAPFN_HEADER_MAGIC_WOFFSET] != ENCAPFN_HEADER_MAGIC {
+            return Err(TockEFError::BinaryMagicInvalid);
+        }
+
+        // Extract the runtime header pointer and ensure that it is fully
+        // contained in contained within the binary:
+        let rthdr_offset = header_slice[ENCAPFN_HEADER_RTHDR_PTR_WOFFSET] as usize;
+        if rthdr_offset > self.binary_length.checked_sub(core::mem::size_of::<u32>()).ok_or(TockEFError::BinarySizeOverflow)? {
+            return Err(TockEFError::BinaryLengthInvalid {
+		actual: self.binary_length,
+		min_expected: rthdr_offset.saturating_add(core::mem::size_of::<u32>()),
+		desc: "Required space for the RT header (as indicated by rthdr_offset)",
+	    });
+        }
+        let rthdr_addr = unsafe { self.binary_start.byte_add(rthdr_offset) };
+        assert!(rthdr_addr as usize % core::mem::size_of::<u32>() == 0);
+
+        // Extract the init function pointer pointer and ensure that it is fully
+        // contained in contained within the binary:
+        let init_offset = header_slice[ENCAPFN_HEADER_INIT_PTR_WOFFSET] as usize;
+        if init_offset > self.binary_length.checked_sub(core::mem::size_of::<u32>())
+	    .ok_or(TockEFError::BinarySizeOverflow)? {
+		return Err(TockEFError::BinaryLengthInvalid {
+		    actual: self.binary_length,
+		    min_expected: init_offset.saturating_add(core::mem::size_of::<u32>()),
+		    desc: "Required space for the init function (as indicated by init_offset)",
+		});
+            }
+
+        // May be a compressed instruction, in which case it'll be aligned on a
+        // 2-byte boundary:
+        let init_addr = unsafe { self.binary_start.byte_add(init_offset) };
+        assert!(init_addr as usize % core::mem::size_of::<u16>() == 0);
+
+        // Extract the function table pointer and ensure that it is fully
+        // contained in contained within the binary:
+        let fntab_offset = header_slice[ENCAPFN_HEADER_FNTAB_PTR_WOFFSET] as usize;
+        let fntab_length = header_slice[ENCAPFN_HEADER_FNTAB_LEN_WOFFSET] as usize;
+        if fntab_length.checked_mul(core::mem::size_of::<*const ()>())
+	    .and_then(|fl| fntab_offset.checked_add(fl))
+	    .ok_or(TockEFError::BinarySizeOverflow)?
+            > self.binary_length
+	    .checked_sub(core::mem::size_of::<u32>())
+	    .ok_or(TockEFError::BinarySizeOverflow)?
+        {
+            return Err(TockEFError::BinaryLengthInvalid {
+		actual: self.binary_length,
+		min_expected: fntab_offset.saturating_add(fntab_length * core::mem::size_of::<*const ()>()).saturating_add(core::mem::size_of::<u32>()),
+		desc: "Required space for the function table (as indicated by fntab_offset + fntab_len * size_of::<*const ()>)",
+	    });
+        }
+        let fntab_addr = unsafe { self.binary_start.byte_add(fntab_offset) };
+        assert!(fntab_addr as usize % core::mem::size_of::<u32>() == 0);
+
+	Ok(EncapfnBinaryParsed {
+	    rthdr_addr,
+	    init_addr,
+	    fntab_addr,
+	    fntab_length,
+	})
+    }
 }
+

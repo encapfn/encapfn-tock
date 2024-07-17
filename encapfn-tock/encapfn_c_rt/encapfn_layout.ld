@@ -38,6 +38,7 @@ SECTIONS {
 	LONG(encapfn_fntab_length - ORIGIN(FLASH));
 
         KEEP(*(.encapfn_hdr));
+	KEEP(*(.encapfn_init));
 
         . = ALIGN(4);
 
