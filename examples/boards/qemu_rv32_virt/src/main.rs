@@ -37,8 +37,7 @@ pub unsafe fn main() {
         static _eappmem: u8;
     }
 
-    let (board_kernel, platform, chip, _default_peripherals) =
-        qemu_rv32_virt_lib::start();
+    let (board_kernel, platform, chip, _default_peripherals) = qemu_rv32_virt_lib::start();
 
     // Special encapsulated functions linker symbols:
     extern "C" {
@@ -49,7 +48,15 @@ pub unsafe fn main() {
     encapfn::branding::new(|brand| {
         // This is unsafe, as it instantiates a runtime that can be used to run
         // foreign functions without memory protection:
-        let (rt, mut alloc, mut access) = unsafe { encapfn::rt::mock::MockRt::new(false, encapfn::rt::mock::stack_alloc::StackAllocator::<encapfn::rt::mock::stack_alloc::StackFrameAllocRiscv>::new(), brand) };
+        let (rt, mut alloc, mut access) = unsafe {
+            encapfn::rt::mock::MockRt::new(
+                false,
+                encapfn::rt::mock::stack_alloc::StackAllocator::<
+                    encapfn::rt::mock::stack_alloc::StackFrameAllocRiscv,
+                >::new(),
+                brand,
+            )
+        };
 
         // Create a "bound" runtime, which implements the LibDemo API:
         let bound_rt = encapfn_example_demo::libdemo::LibDemoRt::new(&rt).unwrap();

@@ -1,4 +1,5 @@
 run:
+	cargo build --release
 	qemu-system-riscv32 \
 	  -machine virt \
 	  -semihosting \

@@ -173,7 +173,13 @@ $(BUILDDIR)/init_cortexm.S.o: $(INIT_CORTEXM_S) | $(BUILDDIR)
 $(BUILDDIR)/%.S.o: %.S* | $(BUILDDIR)
 	$(AS) $(ASFLAGS) -o $@ -g -c $<
 
-$(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf: $(COBJ) $(ASOBJ) $(NEWLIB_BASE_DIR)/$(NEWLIB_TARGET)/libc.a $(NEWLIB_BASE_DIR)/$(NEWLIB_TARGET)/libm.a $(EF_LAYOUT_LD) $(EF_TOCK_BASEDIR)/encapfn_c_rt/encapfn_layout.ld  | $(BUILDDIR)
+$(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf: \
+    $(COBJ) $(ASOBJ) \
+    $(NEWLIB_BASE_DIR)/$(NEWLIB_TARGET)/libc.a \
+    $(NEWLIB_BASE_DIR)/$(NEWLIB_TARGET)/libm.a \
+    $(EF_LAYOUT_LD) \
+    $(EF_TOCK_BASEDIR)/encapfn_c_rt/encapfn_layout.ld \
+    | $(BUILDDIR)
 	$(LD) --no-relax -o $@ $(COBJ) $(ASOBJ) -T$(EF_LAYOUT_LD) $(LDFLAGS)
 
 $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).tab: $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf | $(BUILDDIR)

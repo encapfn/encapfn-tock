@@ -5,6 +5,7 @@ use core::mem::MaybeUninit;
 
 use kernel::platform::mpu::{self, MPU};
 
+use crate::TockEFError;
 use encapfn::abi::calling_convention::Stacked;
 use encapfn::abi::calling_convention::{AREG0, AREG1, AREG2, AREG3, AREG4, AREG5, AREG6, AREG7};
 use encapfn::abi::rv32i_c::Rv32iCABI;
@@ -13,7 +14,6 @@ use encapfn::rt::rv32i_c::{Rv32iCBaseRt, Rv32iCInvokeRes, Rv32iCRt};
 use encapfn::rt::EncapfnRt;
 use encapfn::types::{AccessScope, AllocScope, AllocTracker, EFCopy};
 use encapfn::{EFError, EFResult};
-use crate::TockEFError;
 
 use crate::binary::{EncapfnBinary, EncapfnBinaryParsed};
 
@@ -232,33 +232,35 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         // constants are instantiated outside of the `impl` block.
         let _: () = assert!(core::mem::offset_of!(Self, asm_state) == 0);
 
-	// Parse the binary and extract the necessary offsets:
-	let EncapfnBinaryParsed {
-	    rthdr_addr,
-	    init_addr,
-	    fntab_addr,
-	    fntab_length,
-	} = binary.parse()?;
+        // Parse the binary and extract the necessary offsets:
+        let EncapfnBinaryParsed {
+            rthdr_addr,
+            init_addr,
+            fntab_addr,
+            fntab_length,
+        } = binary.parse()?;
 
         // Create an MPU configuration that sets up appropriate permissions for
         // the Encapsulated Functions binary:
-        let mut mpu_config = mpu.new_config().ok_or_else(|| TockEFError::MPUConfigError)?;
+        let mut mpu_config = mpu
+            .new_config()
+            .ok_or_else(|| TockEFError::MPUConfigError)?;
 
         mpu.allocate_region(
-           binary.binary_start as *const u8,
-           binary.binary_length,
-           binary.binary_length,
-           mpu::Permissions::ReadExecuteOnly,
-           &mut mpu_config,
+            binary.binary_start as *const u8,
+            binary.binary_length,
+            binary.binary_length,
+            mpu::Permissions::ReadExecuteOnly,
+            &mut mpu_config,
         )
         .unwrap();
 
         mpu.allocate_region(
-           ram_region_start as *mut u8 as *const _,
-           ram_region_length,
-           ram_region_length,
-           mpu::Permissions::ReadWriteOnly,
-           &mut mpu_config,
+            ram_region_start as *mut u8 as *const _,
+            ram_region_length,
+            ram_region_length,
+            mpu::Permissions::ReadWriteOnly,
+            &mut mpu_config,
         )
         .unwrap();
 
@@ -369,7 +371,7 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         _a6_runtime_init_addr: *const (),
         _a7_res: *mut TockRv32iCInvokeRes<Self, ()>,
     ) {
-	unimplemented!();
+        unimplemented!();
     }
 
     #[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))]
@@ -404,13 +406,13 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
 
     #[cfg(not(any(target_arch = "riscv32", target_arch = "riscv64")))]
     unsafe extern "C" fn generic_invoke() {
-	unimplemented!();
+        unimplemented!();
 
-	// To avoid complaints about an unused function:
-	#[allow(unreachable_code)]
-	{
-	    let _: _ = Self::encode_return;
-	}
+        // To avoid complaints about an unused function:
+        #[allow(unreachable_code)]
+        {
+            let _: _ = Self::encode_return;
+        }
     }
 
     #[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))]

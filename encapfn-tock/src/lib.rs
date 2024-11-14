@@ -9,14 +9,14 @@
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum TockEFError {
     BinaryLengthInvalid {
-	min_expected: usize,
-	actual: usize,
-	desc: &'static str,
+        min_expected: usize,
+        actual: usize,
+        desc: &'static str,
     },
 
     BinaryAlignError {
-	expected: usize,
-	actual: usize,
+        expected: usize,
+        actual: usize,
     },
 
     BinaryMagicInvalid,
@@ -30,7 +30,7 @@ pub enum TockEFError {
 
 impl From<encapfn::EFError> for TockEFError {
     fn from(ef_error: encapfn::EFError) -> Self {
-	TockEFError::EFError(ef_error)
+        TockEFError::EFError(ef_error)
     }
 }
 
