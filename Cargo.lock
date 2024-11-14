@@ -149,6 +149,7 @@ checksum = "3dca9240753cf90908d7e4aac30f630662b02aebaa1b58a3cadabdb23385b58b"
 [[package]]
 name = "encapfn"
 version = "0.1.0"
+source = "git+https://github.com/encapfn/encapfn?rev=e119560ed64c2ef5bc6e98b5992eeb4db6736e12#e119560ed64c2ef5bc6e98b5992eeb4db6736e12"
 
 [[package]]
 name = "encapfn-demo-nrf52840dk"

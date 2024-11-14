@@ -13,8 +13,7 @@ authors = ["Leon Schuermann <leon@is.currently.online>"]
 edition = "2021"
 
 [workspace.dependencies]
-# encapfn = { git = "https://github.com/encapfn/encapfn", rev = "825b6ff0a5ce840a89edd4ce03c79d47f5d39b07" }
-encapfn = { path = "../encapfn" }
+encapfn = { git = "https://github.com/encapfn/encapfn", rev = "e119560ed64c2ef5bc6e98b5992eeb4db6736e12" }
 bindgen = { git = "https://github.com/encapfn/rust-bindgen", rev = "21a80825e38f15fd3581662310928ada108cef78" }
 
 capsules-core = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
