@@ -13,6 +13,7 @@ fn main() {
         // The input header we would like to generate
         // bindings for.
         .header("c_src/demo.h")
+	.clang_arg("-isystem ../../libtock-newlib-4.3.0.20230120/riscv/riscv64-unknown-elf/include")
 	.rustfmt_configuration_file(Some(
             PathBuf::from("./rustfmt-bindgen.toml").canonicalize().unwrap(),
 	))
