@@ -32,7 +32,7 @@ fn main() {
         .expect("Couldn't write bindings!");
 
     cc::Build::new()
-        .compiler("clang")
+        .compiler("riscv32-none-elf-gcc")
         .file("c_src/demo.c")
         .compile("libdemo");
 }

@@ -19,11 +19,25 @@ let
     withUnfreePkgs = false;
   };
 
+  elf2tab = pkgs.rustPlatform.buildRustPackage rec {
+    name = "elf2tab-${version}";
+    version = "0.12.0";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "tock";
+      repo = "elf2tab";
+      rev = "v${version}";
+      sha256 = "sha256-+VeWLBI6md399Oaumt4pJrOkm0Nz7fmpXN2TjglUE34=";
+    };
+
+    cargoHash = "sha256-UHAwk1fBcabRqy7VMhz4aoQuIur+MQshDOhC7KFyGm4=";
+  };
+
   rust_overlay = import "${pkgs.fetchFromGitHub {
     owner = "nix-community";
     repo = "fenix";
-    rev = "1a92c6d75963fd594116913c23041da48ed9e020";
-    sha256 = "sha256-L3vZfifHmog7sJvzXk8qiKISkpyltb+GaThqMJ7PU9Y=";
+    rev = "4c6c7d5088f12f57afd4ba6449f9eb168ca05620";
+    sha256 = "sha256-ZuVJhcL57hHBtIbaACQzlVD4p/zHOWlKh7V3wrNdnss=";
   }}/overlay.nix";
 
   nixpkgs = import <nixpkgs> { overlays = [ rust_overlay ]; };
@@ -46,11 +60,14 @@ in
       clang
       llvm
       lld
+      pkgsCross.riscv32-embedded.buildPackages.gcc
+      elf2tab
 
       # --- Convenience and support packages ---
-      just
+      gnumake
       python3Full
       tockloader
+      unzip # for libtock prebuilt toolchain download
 
       # --- CI support packages ---
       qemu
