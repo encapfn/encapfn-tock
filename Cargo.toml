@@ -25,9 +25,9 @@ rv32i = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa33
 sifive = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
 tock-tbf = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
 
-qemu_rv32_virt = { git = "https://github.com/lschuermann/tock", rev = "4d15c7156c7796519dc685e733401783fa2d6942" }
+qemu_rv32_virt = { git = "https://github.com/encapfn/tock", rev = "4d15c7156c7796519dc685e733401783fa2d6942" }
 
-[patch."https://github.com/lschuermann/tock"]
+[patch."https://github.com/encapfn/tock"]
 capsules-core = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
 capsules-extra = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
 capsules-system = { git = "https://github.com/tock/tock", rev = "650812b962e9cf1527ed1fa3322c43dcec7cadae" }
