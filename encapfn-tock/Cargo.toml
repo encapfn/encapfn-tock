@@ -1,0 +1,11 @@
+[package]
+name = "encapfn-tock"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+encapfn.workspace = true
+kernel.workspace = true
+tock-tbf.workspace = true
+rv32i.workspace = true

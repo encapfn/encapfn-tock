@@ -1,0 +1,4 @@
+wrapper_name = "LibDemo"
+
+[functions.demo_nop]
+fntab_id = 0
