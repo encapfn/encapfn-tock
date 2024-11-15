@@ -1,8 +1,6 @@
 Cargo Configuration Files
 =========================
 
-> Copied from https://github.com/tock/tock, commit 25ed8d068989f8eaf1a213746e1ba4e28213077f
-
 This folder contains [cargo configuration
 files](https://doc.rust-lang.org/cargo/reference/config.html) that Tock uses for
 building the kernel for different boards. As different platforms use different

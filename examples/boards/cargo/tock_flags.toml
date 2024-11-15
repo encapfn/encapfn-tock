@@ -14,6 +14,10 @@ rustflags = [
   "-C", "linker-flavor=ld.lld",
   # Use static relocation model. See https://github.com/tock/tock/pull/2853
   "-C", "relocation-model=static",
+  # lld by default uses a default page size to align program sections. Tock
+  # expects that program sections are set back-to-back. `-nmagic` instructs the
+  # linker to not page-align sections.
+  "-C", "link-arg=-nmagic",
   # Identical Code Folding (ICF) set to all. This tells the linker to be more
   # aggressive about removing duplicate code. The default is `safe`, and the
   # downside to `all` is that different functions in the code can end up with

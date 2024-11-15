@@ -25,3 +25,6 @@ qemu_rv32_virt.workspace = true
 encapfn.workspace = true
 encapfn-tock = { path = "../../../encapfn-tock" }
 encapfn-example-demo = { path = "../../demo" }
+
+[build-dependencies]
+tock_build_scripts.workspace = true
