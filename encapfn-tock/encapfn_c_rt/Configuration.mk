@@ -122,7 +122,7 @@ ifeq ($(EF_ARCH),rv32i)
   NEWLIB_BASE_DIR := $(TOCK_USERLAND_BASE_DIR)/lib/libtock-newlib-$(NEWLIB_VERSION_rv32)
 
   ARCH            := rv32imc
-  CFLAGS          := -march=$(EF_RV32I_MARCH) -mabi=ilp32 -mcmodel=medlow -std=c99 -isystem $(NEWLIB_BASE_DIR)/$(NEWLIB_INC)
+  CFLAGS          := -march=$(EF_RV32I_MARCH) -mabi=ilp32 -mcmodel=medlow -std=c99 -isystem=$(NEWLIB_BASE_DIR)/$(NEWLIB_INC) -I$(shell readlink -f $(EF_TOCK_BASEDIR)/../opentitan-cryptolib/include)
   ASFLAGS         := -march=$(EF_RV32I_MARCH) -mabi=ilp32
   CXXFLAGS        := -nostdinc++ $(CFLAGS)
   LDFLAGS         := -melf32lriscv
@@ -139,6 +139,6 @@ else ifeq ($(EF_ARCH),cortexm4)
   ASFLAGS         := -mthumb
   CXXFLAGS        := $(CFLAGS)
   LDFLAGS         :=
-  INIT_CORTEXM_S  := $(EF_RT_BASEDIR)/encapfn_c_rt/init_cortexm.S
+  INIT_CORTEXM_S  := $(EF_TOCK_BASEDIR)/encapfn_c_rt/init_cortexm.S
   INIT_S          := $(INIT_CORTEXM_S)
 endif

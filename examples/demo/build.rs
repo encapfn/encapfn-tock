@@ -7,6 +7,7 @@ fn main() {
     println!("cargo:rerun-if-changed=./c_src/demo.h");
 
     let cflags = std::env::var("EF_BINDGEN_CFLAGS").expect("Please set EF_BINDGEN_CFLAGS");
+    // panic!("CFLAGS: {:?}", cflags.split(" ").collect::<Vec<_>>());
 
     let bindings = bindgen::Builder::default()
         .header("c_src/demo.h")
@@ -32,6 +33,11 @@ fn main() {
 
     cc::Build::new()
         .compiler("riscv32-none-elf-gcc")
+	.try_flags_from_environment("EF_BINDGEN_CFLAGS")
+	.unwrap()
         .file("c_src/demo.c")
         .compile("libdemo");
+
+    println!("cargo::rustc-link-search=/home/leons/proj/encapfn/code/encapfn-tock/opentitan-cryptolib");
+    println!("cargo::rustc-link-lib=otcrypto");
 }

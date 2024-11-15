@@ -34,7 +34,7 @@ $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf: \
     $(EF_LAYOUT_LD) \
     $(EF_TOCK_BASEDIR)/encapfn_c_rt/encapfn_layout.ld \
     | $(BUILDDIR)
-	$(LD) --no-relax -o $@ $(COBJ) $(ASOBJ) -T$(EF_LAYOUT_LD) $(LDFLAGS)
+	$(LD) --no-relax -o $@ $(COBJ) $(ASOBJ) $(EF_TOCK_BASEDIR)/../opentitan-cryptolib/libotcrypto.a -T$(EF_LAYOUT_LD) $(LDFLAGS)
 
 $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).tab: $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf | $(BUILDDIR)
 	elf2tab --verbose --minimum-footer-size 3000 --disable -o $@ -n $(EF_BIN_NAME) $<,$(ARCH)
