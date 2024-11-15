@@ -1,5 +1,7 @@
 include $(EF_TOCK_BASEDIR)/encapfn_c_rt/Configuration.mk
 
+$(warning Selected compiler: $(CC))
+
 SRCDIR ?= .
 
 # SRC := $(foreach x, ./, $(wildcard $(addprefix $(x)/*,.c*)))

@@ -14,6 +14,8 @@
 #include "key_transport.h"
 #include "mac.h"
 #include "rsa.h"
+#include "keyblob.h"
+#include "integrity.h"
 
 /**
  * @file

@@ -1,12 +1,16 @@
-#include "demo.h"
-#include <stddef.h>
+#include "otcrypto.h"
 
 typedef void (*fnptr)(void);
 
 fnptr const
 __attribute__ ((section (".encapfn_hdr")))
-encapfn_fntab[1] = {
-    /* 0 */ (fnptr) demo_nop,
+encapfn_fntab[14] = {
+  /* 0 */ (fnptr) keyblob_num_words,
+  /* 1 */ (fnptr) keyblob_from_key_and_mask,
+  /* 2 */ (fnptr) integrity_blinded_checksum,
+  /* 3 */ (fnptr) otcrypto_hmac_init,
+  /* 4 */ (fnptr) otcrypto_hmac_update,
+  /* 5 */ (fnptr) otcrypto_hmac_final,
 };
 
 __attribute__ ((section (".encapfn_hdr")))
