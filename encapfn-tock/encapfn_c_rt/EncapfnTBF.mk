@@ -37,6 +37,6 @@ $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf: \
 	$(LD) --no-relax -o $@ $(COBJ) $(ASOBJ) -T$(EF_LAYOUT_LD) $(LDFLAGS)
 
 $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).tab: $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf | $(BUILDDIR)
-	elf2tab --verbose --minimum-footer-size 3000 --disable -o $@ -n $(EF_BIN_NAME) $<,$(ARCH)
+	elf2tab --verbose --disable -o $@ -n $(EF_BIN_NAME) $<,$(ARCH)
 
 
