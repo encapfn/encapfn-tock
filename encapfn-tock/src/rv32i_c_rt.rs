@@ -386,7 +386,7 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         _a6_runtime_init_addr: *const (),
         _a7_res: *mut TockRv32iCInvokeRes<Self, ()>,
     ) {
-        core::arch::asm!(
+        core::arch::naked_asm!(
             "
                 // Load required parameters in non-argument registers and
                 // continue execution in the generic protection-domain
@@ -400,7 +400,6 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
                 jr   t4                     // Tail-call into the invoke fn
             ",
             invoke_sym = sym Self::generic_invoke,
-            options(noreturn),
         );
     }
 
@@ -418,7 +417,7 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
     #[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))]
     #[naked]
     unsafe extern "C" fn generic_invoke() {
-        core::arch::asm!(
+        core::arch::naked_asm!(
             "
                 // When entering this symbol, we are supposed to invoke a
                 // foreign function in an isolated protection domain (switching
@@ -923,7 +922,6 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             // Runtime ASM state offsets:
             rtas_foreign_stack_ptr_offset = const core::mem::offset_of!(TockRv32iCRtAsmState, foreign_stack_ptr),
             rtas_foreign_stack_bottom_offset = const core::mem::offset_of!(TockRv32iCRtAsmState, foreign_stack_bottom),
-            options(noreturn),
         );
     }
 
@@ -997,11 +995,12 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
 
     fn lookup_symbol<const SYMTAB_SIZE: usize, const FIXED_OFFSET_SYMTAB_SIZE: usize>(
         &self,
-        index: usize,
+        _compact_symtab_index: usize,
+	fixed_offset_symtab_index: usize,
         _symtabstate: &Self::SymbolTableState<SYMTAB_SIZE, FIXED_OFFSET_SYMTAB_SIZE>,
     ) -> Option<*const ()> {
-        if index < self.fntab_length {
-            Some(unsafe { *(self.fntab_addr as *const *const ()).add(index) })
+        if fixed_offset_symtab_index < self.fntab_length {
+            Some(unsafe { *(self.fntab_addr as *const *const ()).add(fixed_offset_symtab_index) })
         } else {
             None
         }
@@ -1084,9 +1083,9 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
 macro_rules! invoke_impl_rtloc_register {
     ($regtype:ident, $rtloc:expr, $fnptrloc:expr, $resptrloc:expr, $marker:expr) => {
         impl<ID: EFID, M: MPU + 'static> Rv32iCRt<0, $regtype<Rv32iCABI>> for TockRv32iCRt<ID, M> {
-            // #[naked]
+            #[naked]
             unsafe extern "C" fn invoke() {
-                core::arch::asm!(
+                core::arch::naked_asm!(
                     concat!("
                     // Load required parameters in non-argument registers and
                     // continue execution in the generic protection-domain
@@ -1100,7 +1099,6 @@ macro_rules! invoke_impl_rtloc_register {
                     jr   t4                     // Tail-call into the invoke fn
                     "),
                     invoke_sym = sym Self::generic_invoke,
-                    options(noreturn),
                );
             }
         }
@@ -1117,7 +1115,7 @@ invoke_impl_rtloc_register!(AREG5, "a5", "a6", "a7", "5");
 impl<ID: EFID, M: MPU + 'static> Rv32iCRt<0, AREG6<Rv32iCABI>> for TockRv32iCRt<ID, M> {
     #[naked]
     unsafe extern "C" fn invoke() {
-        core::arch::asm!(
+        core::arch::naked_asm!(
              concat!("
             // Load required parameters in non-argument registers and
             // continue execution in the generic protection-domain
@@ -1131,7 +1129,6 @@ impl<ID: EFID, M: MPU + 'static> Rv32iCRt<0, AREG6<Rv32iCABI>> for TockRv32iCRt<
             jr   t4                     // Tail-call into the invoke fn
             "),
              invoke_sym = sym Self::generic_invoke,
-             options(noreturn),
         );
     }
 }
@@ -1139,7 +1136,7 @@ impl<ID: EFID, M: MPU + 'static> Rv32iCRt<0, AREG6<Rv32iCABI>> for TockRv32iCRt<
 impl<ID: EFID, M: MPU + 'static> Rv32iCRt<0, AREG7<Rv32iCABI>> for TockRv32iCRt<ID, M> {
     #[naked]
     unsafe extern "C" fn invoke() {
-        core::arch::asm!(
+        core::arch::naked_asm!(
              concat!("
             // Load required parameters in non-argument registers and
             // continue execution in the generic protection-domain
@@ -1153,7 +1150,6 @@ impl<ID: EFID, M: MPU + 'static> Rv32iCRt<0, AREG7<Rv32iCABI>> for TockRv32iCRt<
             jr   t4                     // Tail-call into the invoke fn
             "),
              invoke_sym = sym Self::generic_invoke,
-             options(noreturn),
         );
     }
 }
@@ -1163,7 +1159,7 @@ impl<const STACK_SPILL: usize, const RT_STACK_OFFSET: usize, ID: EFID, M: MPU + 
 {
     #[naked]
     unsafe extern "C" fn invoke() {
-        core::arch::asm!(
+        core::arch::naked_asm!(
             "
             // Load required parameters in non-argument registers and
             // continue execution in the generic protection-domain
@@ -1179,7 +1175,6 @@ impl<const STACK_SPILL: usize, const RT_STACK_OFFSET: usize, ID: EFID, M: MPU + 
             stack_spill = const STACK_SPILL,
             rt_off = const RT_STACK_OFFSET,
             invoke_sym = sym Self::generic_invoke,
-            options(noreturn),
         );
     }
 }
