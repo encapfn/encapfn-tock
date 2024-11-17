@@ -953,7 +953,9 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         } else {
             // TODO: encode proper error here!
             panic!(
-                "Function faulted: {:08x} {:08x} {:p} {:p} {:p} {:08x} {:08x} {:08x}",
+                "Function faulted:\r\n\
+		 a0={:08x}, a1={:08x}, rt={:p}, invoke_res={:p},\r\n\
+                 fsp={:p}, mcause={:08x} mtval={:08x} mepc={:08x}",
                 a0, a1, a2_rt, a3_invoke_res, a4_fsp, a5_mcause, a6_mtval, a7_mepc,
             );
         }
