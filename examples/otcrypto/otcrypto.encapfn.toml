@@ -1,0 +1,22 @@
+wrapper_name = "LibOtCrypto"
+
+[functions.keyblob_num_words]
+fntab_id = 0
+
+[functions.keyblob_from_key_and_mask]
+fntab_id = 1
+
+[functions.integrity_blinded_checksum]
+fntab_id = 2
+
+[functions.otcrypto_hmac_init]
+fntab_id = 3
+
+[functions.otcrypto_hmac_update]
+fntab_id = 4
+
+[functions.otcrypto_hmac_final]
+fntab_id = 5
+
+[functions.entropy_complex_init]
+fntab_id = 6
