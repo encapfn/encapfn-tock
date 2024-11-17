@@ -215,6 +215,7 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         binary: EncapfnBinary,
         ram_region_start: *mut (),
         ram_region_length: usize,
+	addl_mpu_regions: impl Iterator<Item = (kernel::platform::mpu::Region, kernel::platform::mpu::Permissions)>,
         _branding: ID,
     ) -> Result<
         (
@@ -262,27 +263,18 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             mpu::Permissions::ReadWriteOnly,
             &mut mpu_config,
         )
-        .unwrap();
+            .unwrap();
 
-        // // OpenTitan RVDM
-        // mpu.allocate_region(
-        //    0x00010000 as *mut u8 as *const _,
-        //    0x00001000,
-        //    0x00001000,
-        //    mpu::Permissions::ReadWriteExecute,
-        //    &mut mpu_config,
-        // )
-        // .unwrap();
-
-        // // OpenTitan MMIO
-        // mpu.allocate_region(
-        //    0x40000000 as *mut u8 as *const _,
-        //    0x10000000,
-        //    0x10000000,
-        //    mpu::Permissions::ReadWriteOnly,
-        //    &mut mpu_config,
-        // )
-        // .unwrap();
+	for (region, permissions) in addl_mpu_regions {
+	    mpu.allocate_region(
+		region.start_address(),
+		region.size(),
+		region.size(),
+		permissions,
+		&mut mpu_config,
+            )
+		.unwrap();
+	}
 
         // Construct an initial runtime instance. We don't yet know where our
         // `foreign_stack_top` should be placed -- that will depend on how much

@@ -84,6 +84,8 @@ pub unsafe fn main() {
                 core::ptr::addr_of_mut!(_efram_start) as *mut (),
                 core::ptr::addr_of!(_efram_end) as usize
                     - core::ptr::addr_of!(_efram_start) as usize,
+		// Expose no addl. MPU regions:
+		[].into_iter(),
                 brand,
             )
         }
