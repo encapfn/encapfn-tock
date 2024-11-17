@@ -139,6 +139,6 @@ else ifeq ($(EF_ARCH),cortexm4)
   ASFLAGS         := -mthumb
   CXXFLAGS        := $(CFLAGS)
   LDFLAGS         :=
-  INIT_CORTEXM_S  := $(EF_RT_BASEDIR)/encapfn_c_rt/init_cortexm.S
+  INIT_CORTEXM_S  := $(EF_TOCK_BASEDIR)/encapfn_c_rt/init_cortexm.S
   INIT_S          := $(INIT_CORTEXM_S)
 endif
