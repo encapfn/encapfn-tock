@@ -13,6 +13,8 @@ all: run
 ../../demo/build/qemu_rv32_virt_efdemo.tbf:
 	make -C ../../demo/ EF_LAYOUT_LD=$(EF_LAYOUT_LD) EF_TARGET=$(EF_TARGET) EF_ARCH=$(EF_ARCH)
 
+foreign-libs: ../../demo/build/qemu_rv32_virt_efdemo.tbf
+
 .PHONY: run
 run: ../../demo/build/qemu_rv32_virt_efdemo.tbf
 	EF_BINDGEN_CFLAGS="$(CFLAGS)" cargo build --release
