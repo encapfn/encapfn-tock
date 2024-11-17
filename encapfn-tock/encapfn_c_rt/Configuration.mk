@@ -68,19 +68,19 @@ TOOLCHAIN_cortexm = arm-none-eabi-
 
 # EF target "compression", for when compilers support multiple archs.
 ifeq ($(EF_ARCH),rv32i)
-  EF_ARCH := rv32i
+  EF_ARCH_FAMILY := rv32i
   EF_RV32I_MARCH := rv32i
   # TODO: how to determine GCC version?
   NEWLIB_INC := riscv/riscv64-unknown-elf/include
   NEWLIB_TARGET := riscv/riscv64-unknown-elf/lib/rv32i/ilp32
 else ifeq ($(EF_ARCH),rv32imc)
-  EF_ARCH := rv32i
+  EF_ARCH_FAMILY := rv32i
   EF_RV32I_MARCH := rv32imc
   NEWLIB_INC := riscv/riscv64-unknown-elf/include
   # TODO: we don't have an imc version of this library?
   NEWLIB_TARGET := riscv/riscv64-unknown-elf/lib/rv32im/ilp32
 else ifeq ($(EF_ARCH),rv32imac)
-  EF_ARCH := rv32i
+  EF_ARCH_FAMILY := rv32i
   EF_RV32I_MARCH := rv32imac
   NEWLIB_INC := riscv/riscv64-unknown-elf/include
   # TODO: how to determine GCC version?
@@ -91,7 +91,7 @@ else
   $(error Unknown EF_ARCH)
 endif
 
-ifeq ($(EF_ARCH),rv32i)
+ifeq ($(EF_ARCH_FAMILY),rv32i)
   CC              ?= $(TOOLCHAIN_rv32i)gcc
   CXX             ?= $(TOOLCHAIN_rv32i)g++
   AS              ?= $(TOOLCHAIN_rv32i)as
