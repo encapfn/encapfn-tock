@@ -122,7 +122,7 @@ ifeq ($(EF_ARCH_FAMILY),rv32i)
   NEWLIB_BASE_DIR := $(TOCK_USERLAND_BASE_DIR)/lib/libtock-newlib-$(NEWLIB_VERSION_rv32)
 
   ARCH            := rv32imc
-  CFLAGS          := -march=$(EF_RV32I_MARCH) -mabi=ilp32 -mcmodel=medlow -std=c99 -nodefaultlibs -nostdlib -ffreestanding -isystem=$(NEWLIB_BASE_DIR)/$(NEWLIB_INC) $(EF_CFLAGS)
+  CFLAGS          := -march=$(EF_RV32I_MARCH) -mabi=ilp32 -mcmodel=medlow -std=c99 -nodefaultlibs -nostdlib -ffreestanding -I$(NEWLIB_BASE_DIR)/$(NEWLIB_INC) -isystem=$(NEWLIB_BASE_DIR)/$(NEWLIB_INC) $(EF_CFLAGS)
   ASFLAGS         := -march=$(EF_RV32I_MARCH) -mabi=ilp32
   CXXFLAGS        := -nostdinc++ $(CFLAGS)
   LDFLAGS         := -melf32lriscv
