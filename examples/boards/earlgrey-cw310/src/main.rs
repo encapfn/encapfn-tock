@@ -4,6 +4,7 @@
 #![cfg_attr(not(doc), no_main)]
 
 use kernel::{capabilities, create_capability, static_init};
+use kernel::platform::mpu;
 use earlgrey_board_lib::{EarlGreyChip, ChipConfig};
 use encapfn::rt::EncapfnRt;
 
@@ -62,7 +63,7 @@ pub unsafe fn main() {
     }
 
 
-    let (board_kernel, earlgrey, chip, peripherals) = earlgrey_board_lib::start();
+    let (board_kernel, earlgrey, chip, _peripherals) = earlgrey_board_lib::start();
 
     //// Try to load the efdemo Encapsulated Functions TBF binary:
     let ef_cryptolib_binary = encapfn_tock::binary::EncapfnBinary::find(
@@ -76,23 +77,23 @@ pub unsafe fn main() {
 	.unwrap();
 
     // Additional MPU regions to expose to the Encapsulated Function:
-    let mpu_regions: [(mpu::Region, mpu::Permissions); 2] = [
+    let mpu_regions: [(mpu::Region, mpu::Permissions); 1] = [
         (
             // OpenTitan MMIO peripherals:
-            mpu::Region {
-                start_address: 0x40000000,
-                size: 0x10000000,
-            },
+            mpu::Region::new(
+		0x40000000 as *const _,
+                0x10000000,
+            ),
             mpu::Permissions::ReadWriteOnly,
         ),
-        (
-            // OpenTitan MMIO peripherals:
-            mpu::Region {
-                start_address: 0x00010000,
-                size: 0x00001000,
-            },
-            mpu::Permissions::ReadWriteExecute,
-        )
+        // (
+        //     // OpenTitan debug manager (RVDM) memory:
+        //     mpu::Region::new(
+        //         0x00010000 as *const _,
+        //         0x00001000,
+        //     ),
+        //     mpu::Permissions::ReadWriteExecute,
+        // )
     ];
 
     // This is unsafe, as it instantiates a runtime that can be used to run
