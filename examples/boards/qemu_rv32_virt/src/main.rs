@@ -9,8 +9,8 @@
 // https://github.com/rust-lang/rust/issues/62184.
 #![cfg_attr(not(doc), no_main)]
 
-use core::mem::MaybeUninit;
 use core::ptr::addr_of_mut;
+use core::slice;
 
 use kernel::debug;
 use kernel::{capabilities, create_capability};
@@ -48,6 +48,7 @@ pub unsafe fn main() {
 
     encapfn::branding::new(|brand| {
 	use lwip::LibLwip;
+	use encapfn::rt::EncapfnRt;
         // This is unsafe, as it instantiates a runtime that can be used to run
         // foreign functions without memory protection:
         let (rt, mut alloc, mut access) = unsafe {
@@ -62,16 +63,39 @@ pub unsafe fn main() {
 
         // Create a "bound" runtime, which implements the LibLwip API:
         let lw = lwip::LibLwipRt::new(&rt).unwrap();
-	lw.lwip_init(&mut access);
 
-	let mut netif: lwip::netif = unsafe { MaybeUninit::zeroed().assume_init() };
-	let ipaddr = lwip::ip4_addr { addr: 0 };
-	let netmask = lwip::ip4_addr { addr: 0 };
-	let gw = lwip::ip4_addr { addr: 0 };
-	let state: *mut core::ffi::c_void = 0 as *mut _;
-	//let result = lw.netif_add(&mut netif, &ipaddr, &netmask, &gw, state, None, None, &mut access).unwrap();
+	lw.lwip_init(&mut access).unwrap();
+
+
+	extern "C" fn netif_output(_netif: *mut lwip::netif, buf: *mut lwip::pbuf) -> i8 {
+	    let buf = unsafe { &mut *buf };
+	    let payload = unsafe { slice::from_raw_parts(buf.payload as *const u8, buf.len as usize) };
+	    debug!("Payload {:?}", payload);
+	    0
+	}
+
+	extern "C" fn netif_init(netif: *mut lwip::netif) -> i8 {
+	    let netif = unsafe { &mut *netif };
+	    netif.linkoutput = Some(netif_output);
+	    netif.name = [b'e' as i8, b'0' as i8];
+	    debug!("Initializing");
+	    0
+	}
+
+	lw.rt().allocate_stacked_t_mut::<lwip::netif, _, _>(&mut alloc, |netif, mut alloc2| {
+	    lw.rt().allocate_stacked_t_mut::<lwip::ip4_addr, _, _>(&mut alloc2, |ipaddr, _alloc3| {
+		ipaddr.write(lwip::ip4_addr { addr: 0}, &mut access);
+		let state: *mut core::ffi::c_void = 0 as *mut _;
+		let result = lw.netif_add(netif.as_ptr().into(), ipaddr.as_ptr().into(), ipaddr.as_ptr().into(), ipaddr.as_ptr().into(), state, Some(netif_init), None, &mut access).unwrap();
+		debug!("{:?}", result.validate());
+	    }).unwrap();
+	}).unwrap();
+
+
 	let result = lw.netif_get_by_index(1, &mut access).unwrap();
-	debug!("{:?}", result.validate());
+	debug!("{:?}", unsafe { &*(result.validate().unwrap()) }.name.map(|b| b as u8 as char));
+	let result = lw.netif_get_by_index(2, &mut access).unwrap();
+	debug!("{:?}", unsafe { &*(result.validate().unwrap()) }.name.map(|b| b as u8 as char));
     });
 
     /*encapfn::branding::new(|brand| {

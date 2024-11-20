@@ -3,7 +3,7 @@
 EF_CFLAGS       := -I./src/include -I./config
 EF_TOCK_BASEDIR := ../encapfn-tock
 EF_BIN_NAME     := eflwip
-EF_LINK_OBJ     := $(EF_TOCK_BASEDIR)/../opentitan-cryptolib/liblwip.a
+#EF_LINK_OBJ     := $(EF_TOCK_BASEDIR)/../opentitan-cryptolib/liblwip.a
 
 SRCDIR          := ./src
 
