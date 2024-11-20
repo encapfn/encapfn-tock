@@ -1,0 +1,3 @@
+# Our custom bindgen generates C-string literals, which are only
+# supported on edition 2021 onward:
+edition = "2021"

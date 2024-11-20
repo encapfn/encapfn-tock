@@ -15,9 +15,12 @@ all: run
 
 foreign-libs: ../../demo/build/qemu_rv32_virt_efdemo.tbf
 
-.PHONY: run
-run: ../../demo/build/qemu_rv32_virt_efdemo.tbf
+.PHONY: build
+build: ../../demo/build/qemu_rv32_virt_efdemo.tbf
 	EF_BINDGEN_CFLAGS="$(CFLAGS)" cargo build --release
+
+.PHONY: run
+run: build
 	qemu-system-riscv32 \
 	  -machine virt \
 	  -semihosting \

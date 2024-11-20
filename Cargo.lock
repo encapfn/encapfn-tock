@@ -139,6 +139,7 @@ dependencies = [
  "encapfn-example-demo",
  "encapfn-tock",
  "kernel",
+ "lwip",
  "qemu_rv32_virt",
  "qemu_rv32_virt_chip",
  "rv32i",
@@ -276,6 +277,16 @@ name = "log"
 version = "0.4.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
+
+[[package]]
+name = "lwip"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "cc",
+ "encapfn",
+ "kernel",
+]
 
 [[package]]
 name = "memchr"

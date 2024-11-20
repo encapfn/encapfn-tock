@@ -1,0 +1,10 @@
+wrapper_name = "LibLwip"
+
+[functions.lwip_init]
+fntab_id = 0
+
+[functions.netif_add]
+fntab_id = 1
+
+[functions.netif_get_by_index]
+fntab_id = 2

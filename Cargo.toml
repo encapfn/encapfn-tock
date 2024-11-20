@@ -3,6 +3,7 @@ members = [
     "encapfn-tock",
     "examples/demo",
     "examples/boards/qemu_rv32_virt",
+    "lwip",
 ]
 resolver = "2"
 
