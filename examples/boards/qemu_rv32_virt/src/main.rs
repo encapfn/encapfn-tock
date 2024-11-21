@@ -64,6 +64,9 @@ pub unsafe fn main() {
         // Run a test:
         encapfn_example_demo::test_libdemo(&bound_rt, &mut alloc, &mut access);
         debug!("Ran test_libdemo with the MockRt!");
+
+        // Test callbacks!
+        encapfn_example_demo::test_libdemo_callback(&bound_rt, &mut alloc, &mut access);
     });
 
     encapfn::branding::new(|brand| {
@@ -84,8 +87,8 @@ pub unsafe fn main() {
                 core::ptr::addr_of_mut!(_efram_start) as *mut (),
                 core::ptr::addr_of!(_efram_end) as usize
                     - core::ptr::addr_of!(_efram_start) as usize,
-		// Expose no addl. MPU regions:
-		[].into_iter(),
+                // Expose no addl. MPU regions:
+                [].into_iter(),
                 brand,
             )
         }

@@ -43,3 +43,35 @@ pub fn test_libdemo<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT, RT = RT
         .unwrap();
     // prev alloc is valid again
 }
+
+#[inline(never)]
+pub fn test_libdemo_callback<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT, RT = RT>>(
+    lib: &L,
+    alloc: &mut AllocScope<RT::AllocTracker<'_>, RT::ID>,
+    access: &mut AccessScope<RT::ID>,
+) {
+    lib.rt()
+        .setup_callback(
+            &mut |ctx| {
+                panic!("Callback called, context: {:?}", ctx);
+            },
+            alloc,
+            |callback_ptr, _alloc| {
+                let ret = lib
+                    .demo_invoke_callback(
+                        unsafe {
+                            // TODO: provide a safe method to perform this cast
+                            core::mem::transmute::<
+                                *const extern "C" fn(),
+                                Option<unsafe extern "C" fn()>,
+                            >(callback_ptr as *const _)
+                        },
+                        access,
+                    )
+                    .unwrap()
+                    .validate()
+                    .unwrap();
+            },
+        )
+        .unwrap();
+}

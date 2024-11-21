@@ -8,3 +8,7 @@ int demo_nop(int a, bool *boolarray) {
 
     return a + 42;
 }
+
+void demo_invoke_callback(void (*callback_fn)()) {
+  callback_fn();
+}

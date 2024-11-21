@@ -1,9 +1,5 @@
 #![no_std]
-#![feature(
-    naked_functions,
-    maybe_uninit_as_bytes,
-    maybe_uninit_write_slice
-)]
+#![feature(naked_functions, maybe_uninit_as_bytes, maybe_uninit_write_slice)]
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum TockEFError {
