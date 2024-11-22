@@ -10,6 +10,8 @@ fn main() {
     let bindings = bindgen::Builder::default()
         .header("src/include/lwip/init.h")
         .header("src/include/lwip/netif.h")
+        .header("src/include/lwip/dhcp.h")
+        .header("src/include/lwip/timeouts.h")
         .header("src/include/lwip/tcp.h")
         .header("src/include/lwip/udp.h")
         .header("src/include/lwip/ip_addr.h")
@@ -80,4 +82,3 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed=lwip.encapfn.toml");
 }
-

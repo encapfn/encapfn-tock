@@ -43,7 +43,7 @@
 #define LWIP_IPV6                  1
 
 #define NO_SYS                     1
-#define LWIP_TIMERS                0
+#define LWIP_TIMERS                1
 #define LWIP_SOCKET                (NO_SYS==0)
 #define LWIP_NETCONN               (NO_SYS==0)
 #define LWIP_NETIF_API             (NO_SYS==0)
