@@ -52,7 +52,7 @@ pub fn test_libdemo_callback<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT
 ) {
     lib.rt()
         .setup_callback(
-            &mut |ctx| {
+            &mut |ctx, alloc, access| {
                 panic!("Callback called, context: {:?}", ctx);
             },
             alloc,

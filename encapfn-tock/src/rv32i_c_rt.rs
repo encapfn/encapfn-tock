@@ -1063,14 +1063,18 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
         res
     }
 
-    fn setup_callback<C, F, R>(
+    fn setup_callback<'a, C, F, R>(
         &self,
-        _callback: &mut C,
+        _callback: &'a mut C,
         _alloc_scope: &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
         _fun: F,
     ) -> Result<R, EFError>
     where
-        C: FnMut(&Self::CallbackCtx),
+        C: FnMut(
+            &Self::CallbackCtx,
+            &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
+            &mut AccessScope<Self::ID>,
+        ),
         F: for<'b> FnOnce(
             *const Self::CallbackTrampolineFn,
             &'b mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
