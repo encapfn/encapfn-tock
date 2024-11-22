@@ -21,7 +21,7 @@ pub fn test_libdemo<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT, RT = RT
     access: &mut AccessScope<RT::ID>,
 ) {
     lib.rt()
-        .allocate_stacked_t_mut::<[bool; 32], _, _>(alloc, |allocation, _alloc| {
+        .allocate_stacked_t_mut::<[bool; 32], _, _>(alloc, |allocation, alloc| {
             //let bool_array_ref = allocation.into_ref(alloc);
             let bool_array_val = allocation.write([false; 32], access);
             kernel::debug!("allocated array {:?}", *bool_array_val);
@@ -31,7 +31,7 @@ pub fn test_libdemo<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT, RT = RT
             let bool_array_ptr: *mut [bool; 32] = bool_array_efptr.into();
 
             let ret = lib
-                .demo_nop(1337, bool_array_ptr as *mut bool, access)
+                .demo_nop(1337, bool_array_ptr as *mut bool, alloc, access)
                 .unwrap()
                 .validate()
                 .unwrap();
@@ -52,12 +52,12 @@ pub fn test_libdemo_callback<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT
 ) {
     lib.rt()
         .setup_callback(
-            &mut |ctx, alloc, access| {
+            &mut |ctx, _alloc, _access| {
                 panic!("Callback called, context: {:?}", ctx);
             },
             alloc,
-            |callback_ptr, _alloc| {
-                let ret = lib
+            |callback_ptr, alloc| {
+                lib
                     .demo_invoke_callback(
                         unsafe {
                             // TODO: provide a safe method to perform this cast
@@ -66,6 +66,7 @@ pub fn test_libdemo_callback<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT
                                 Option<unsafe extern "C" fn()>,
                             >(callback_ptr as *const _)
                         },
+			alloc,
                         access,
                     )
                     .unwrap()

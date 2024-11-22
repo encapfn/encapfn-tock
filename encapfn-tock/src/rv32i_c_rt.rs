@@ -370,10 +370,10 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         ))
     }
 
-    pub fn init(&self) -> EFResult<()> {
+    fn init(&self) -> EFResult<()> {
         let mut res = TockRv32iCInvokeRes::new();
 
-        self.execute(|| unsafe {
+        self.execute_int_configure_mpu(|| unsafe {
             Self::foreign_runtime_init(
                 self.rthdr_addr as usize,
                 0,
@@ -400,6 +400,17 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             .set(res.inner.sp as *mut ());
 
         Ok(EFCopy::new(()))
+    }
+
+    fn execute_int_configure_mpu<R, F: FnOnce() -> R>(&self, f: F) -> R {
+        self.mpu.configure_mpu(&self.mpu_config);
+        self.mpu.enable_app_mpu();
+
+        let res = f();
+
+        self.mpu.disable_app_mpu();
+
+        res
     }
 
     #[cfg(not(any(target_arch = "riscv32", target_arch = "riscv64")))]
@@ -1052,15 +1063,13 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
         }
     }
 
-    fn execute<R, F: FnOnce() -> R>(&self, f: F) -> R {
-        self.mpu.configure_mpu(&self.mpu_config);
-        self.mpu.enable_app_mpu();
-
-        let res = f();
-
-        self.mpu.disable_app_mpu();
-
-        res
+    fn execute<R, F: FnOnce() -> R>(
+        &self,
+        _alloc_scope: &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
+        _access_scope: &mut AccessScope<Self::ID>,
+        f: F,
+    ) -> R {
+        self.execute_int_configure_mpu(f)
     }
 
     fn setup_callback<'a, C, F, R>(

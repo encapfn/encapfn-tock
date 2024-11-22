@@ -12,8 +12,8 @@ authors = ["Leon Schuermann <leon@is.currently.online>"]
 edition = "2021"
 
 [workspace.dependencies]
-encapfn = { git = "https://github.com/encapfn/encapfn", rev = "3823385a11c568ec3ec990b8dfaa9337f1ec0cb9" }
-bindgen = { git = "https://github.com/encapfn/rust-bindgen", rev = "e10d60a10c23a9ad250b2e280ffc7a8731b0a481" }
+encapfn = { git = "https://github.com/encapfn/encapfn", rev = "a4d89b63c55256485ce459d92015fa218476ade0" }
+bindgen = { git = "https://github.com/encapfn/rust-bindgen", rev = "8ab3d0c484b8fe9483a045f8a46b67b79661d773" }
 
 capsules-core = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 capsules-extra = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
