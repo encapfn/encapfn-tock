@@ -82,12 +82,25 @@ pub unsafe fn main() {
 	    0
 	}
 
+    extern "C" fn netif_set_default(netif: *mut lwip::netif) -> i8 {
+        let netif = unsafe { &mut *netif };
+        debug!("Setting Default");
+        0
+    }
+
 	lw.rt().allocate_stacked_t_mut::<lwip::netif, _, _>(&mut alloc, |netif, mut alloc2| {
 	    lw.rt().allocate_stacked_t_mut::<lwip::ip4_addr, _, _>(&mut alloc2, |ipaddr, _alloc3| {
 		ipaddr.write(lwip::ip4_addr { addr: 0}, &mut access);
 		let state: *mut core::ffi::c_void = 0 as *mut _;
 		let result = lw.netif_add(netif.as_ptr().into(), ipaddr.as_ptr().into(), ipaddr.as_ptr().into(), ipaddr.as_ptr().into(), state, Some(netif_init), None, &mut access).unwrap();
-		debug!("{:?}", result.validate());
+		debug!("netif_add output: {:?}", result.validate());
+
+        let set_default_result = lw.netif_set_default(netif.as_ptr().into(), &mut access).unwrap();
+        debug!("netif_set_default {:?}", set_default_result.validate());
+
+        let set_up_result = lw.netif_set_up(netif.as_ptr().into(), &mut access).unwrap();
+        debug!("netif_set_up {:?}", set_up_result.validate());
+        
 	    }).unwrap();
 	}).unwrap();
 

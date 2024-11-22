@@ -8,3 +8,9 @@ fntab_id = 1
 
 [functions.netif_get_by_index]
 fntab_id = 2
+
+[functions.netif_set_default]
+fntab_id = 3
+
+[functions.netif_set_up]
+fntab_id = 4
