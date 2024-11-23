@@ -74,9 +74,9 @@ pub unsafe fn main() {
         lw.lwip_init(&mut alloc, &mut access).unwrap();
 
         extern "C" fn netif_output(_netif: *mut lwip::netif, buf: *mut lwip::pbuf, ipaddr: *const lwip::ip4_addr) -> i8 {
-	    debug!("Output!!!");
-	    0
-	}
+	        debug!("Output!!!");
+	        0
+	    }
 
         extern "C" fn netif_linkoutput(_netif: *mut lwip::netif, buf: *mut lwip::pbuf) -> i8 {
             let buf = unsafe { &mut *buf };
@@ -89,38 +89,34 @@ pub unsafe fn main() {
         extern "C" fn netif_init(netif: *mut lwip::netif) -> i8 {
             debug!("Initializing {:?}", netif);
             let netif = unsafe { &mut *netif };
-	    //netif.output = Some(lwip::etharp_output);
-	    netif.output = Some(netif_output);
-            netif.linkoutput = Some(netif_linkoutput);
-	    netif.hwaddr = [0x00, 0x0c, 0x29, 0x7d, 0xae, 0xc7];
-	    netif.hwaddr_len = 6;
-            netif.name = [b'e' as i8, b'0' as i8];
-	    netif.flags      = (lwip::NETIF_FLAG_BROADCAST | lwip::NETIF_FLAG_ETHARP | lwip::NETIF_FLAG_ETHERNET | lwip::NETIF_FLAG_IGMP | lwip::NETIF_FLAG_MLD6) as u8;
-	    netif.mtu = 1500;
-            0
+	        //netif.output = Some(lwip::etharp_output);
+	        netif.output = Some(netif_output);
+                   netif.linkoutput = Some(netif_linkoutput);
+	        netif.hwaddr = [0x00, 0x0c, 0x29, 0x7d, 0xae, 0xc7];
+	        netif.hwaddr_len = 6;
+                   netif.name = [b'e' as i8, b'0' as i8];
+	        netif.flags      = (lwip::NETIF_FLAG_BROADCAST | lwip::NETIF_FLAG_ETHARP | lwip::NETIF_FLAG_ETHERNET | lwip::NETIF_FLAG_IGMP | lwip::NETIF_FLAG_MLD6) as u8;
+	        netif.mtu = 1500;
+                   0
         }
 
         lw.rt()
             .allocate_stacked_t_mut::<lwip::netif, _, _>(&mut alloc, |netif, mut alloc2| {
                 lw.rt().setup_callback(
                     &mut |ctx, _alloc, _access| {
-                        panic!("Callback called, context: {:?}", ctx);
+                        panic!("Callback called!");
                     },
                     alloc2,
                     |callback_ptr, alloc3| {
+                        lw.rt()
+                            .allocate_stacked_t_mut::<lwip::ip4_addr, _, _>(
+                                alloc3,
+                                |ipaddr, alloc4| {
+                                    ipaddr.write(lwip::ip4_addr { addr: 0 }, &mut access);
 
-                        
-                
-                lw.rt()
-                    .allocate_stacked_t_mut::<lwip::ip4_addr, _, _>(
-                        alloc3,
-                        |ipaddr, alloc4| {
-                            ipaddr.write(lwip::ip4_addr { addr: 0 }, &mut access);
-                            
                                     let state: *mut core::ffi::c_void = 0 as *mut _;
                                     let result = lw
                                         .netif_add(
-
                                             netif.as_ptr().into(),
                                             ipaddr.as_ptr().into(),
                                             ipaddr.as_ptr().into(),
@@ -139,57 +135,57 @@ pub unsafe fn main() {
                                         )
                                         .unwrap();
                                     debug!("{:?}", result.validate());
-                        },
-                    )
-                    .unwrap();
-                let set_default_result = lw
-                    .netif_set_default(netif.as_ptr().into(), alloc3, &mut access)
-                    .unwrap();
-                debug!("netif_set_default {:?}", set_default_result.validate());
+                                },
+                            )
+                            .unwrap();
 
-                let set_up_result = lw.netif_set_up(netif.as_ptr().into(), alloc3, &mut access).unwrap();
-                debug!("netif_set_up {:?}", set_up_result.validate());
-		debug!("DHCP {:?}", lw.dhcp_start(netif.as_ptr().into(), alloc3, &mut access).unwrap().validate());
-		let pbuf = lw.pbuf_alloc(lwip::pbuf_layer_PBUF_RAW, 52, lwip::pbuf_type_PBUF_POOL, alloc3, &mut access).unwrap().validate().unwrap();
+                        let set_default_result = lw
+                            .netif_set_default(netif.as_ptr().into(), alloc3, &mut access)
+                            .unwrap();
+                        debug!("netif_set_default {:?}", set_default_result.validate());
+                                
+                        let set_up_result = lw.netif_set_up(netif.as_ptr().into(), alloc3, &mut access).unwrap();
+                        debug!("netif_set_up {:?}", set_up_result.validate());
+                                
+                		debug!("DHCP {:?}", lw.dhcp_start(netif.as_ptr().into(), alloc3, &mut access).unwrap().validate());
+                		let pbuf = lw.pbuf_alloc(lwip::pbuf_layer_PBUF_RAW, 52, lwip::pbuf_type_PBUF_POOL, alloc3, &mut access).unwrap().validate().unwrap();
 
+                        lw.rt().allocate_stacked_t_mut::<[u8; 52], _, _>(
+                            alloc3,
+                            |buf, alloc4| {
+                			    buf.write(ICMP_ECHO_ETH, &mut access);
+                			    lw.pbuf_take(pbuf, buf.as_ptr().0 as *const _, ICMP_ECHO_ETH.len() as u16, alloc4, &mut access).unwrap();
+                			}).unwrap();
+                        
+		                debug!("{:?}", lw.netif_input(pbuf, netif.as_ptr().into(), alloc3, &mut access).unwrap().validate());
 
-                lw.rt()
-                    .allocate_stacked_t_mut::<[u8; 52], _, _>(
-                        alloc3,
-                        |buf, alloc4| {
-			    buf.write(ICMP_ECHO_ETH, &mut access);
-			    lw.pbuf_take(pbuf, buf.as_ptr().0 as *const _, ICMP_ECHO_ETH.len() as u16, alloc4, &mut access).unwrap();
-			}).unwrap();
+                        let netif = EFPtr::<lwip::netif>::from(
+                            lw.netif_get_by_index(1, alloc3, &mut access)
+                                .unwrap()
+                                .validate()
+                                .unwrap(),
+                        )
+                        .upgrade_unchecked()
+                        .validate(&mut access)
+                        .unwrap();
+                        debug!("{:?}", netif.name.map(|b| b as u8 as char));
+                        let netif = EFPtr::<lwip::netif>::from(
+                            lw.netif_get_by_index(2, alloc3, &mut access)
+                                .unwrap()
+                                .validate()
+                                .unwrap(),
+                        )
+                        .upgrade_unchecked()
+                        .validate(&mut access)
+                        .unwrap();
+                        debug!("{:?}", netif.name.map(|b| b as u8 as char));
 
-		debug!("{:?}", lw.netif_input(pbuf, netif.as_ptr().into(), alloc3, &mut access).unwrap().validate());
+                        #[no_mangle]
+	                    pub extern "C" fn sys_now() -> u32 {
+	                        1000
+	                    }
 
-        let netif = EFPtr::<lwip::netif>::from(
-            lw.netif_get_by_index(1, alloc3, &mut access)
-                .unwrap()
-                .validate()
-                .unwrap(),
-        )
-        .upgrade_unchecked()
-        .validate(&mut access)
-        .unwrap();
-        debug!("{:?}", netif.name.map(|b| b as u8 as char));
-        let netif = EFPtr::<lwip::netif>::from(
-            lw.netif_get_by_index(2, alloc3, &mut access)
-                .unwrap()
-                .validate()
-                .unwrap(),
-        )
-        .upgrade_unchecked()
-        .validate(&mut access)
-        .unwrap();
-        debug!("{:?}", netif.name.map(|b| b as u8 as char));
-
-	#[no_mangle]
-	pub extern "C" fn sys_now() -> u32 {
-	    1000
-	}
-
-	lw.sys_check_timeouts(alloc3, &mut access);
+	                    lw.sys_check_timeouts(alloc3, &mut access);
     })})});
 
     /*encapfn::branding::new(|brand| {
