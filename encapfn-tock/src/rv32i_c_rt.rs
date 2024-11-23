@@ -1,5 +1,5 @@
 use core::cell::Cell;
-use core::ffi::CStr;
+use core::ffi::{c_void, CStr};
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
 
@@ -17,16 +17,18 @@ use encapfn::{EFError, EFResult};
 
 use crate::binary::{EncapfnBinary, EncapfnBinaryParsed};
 
+// Use 8 arguments, as that's how many are passed in registers on RISC-V.
+type CallbackTrampolineFn = extern "C" fn(usize, usize, usize, usize, usize, usize, usize, usize);
+
 #[derive(Clone, Debug)]
-pub struct TockRv32iCRtAllocTracker<'a> {
+pub struct TockRv32iCRtAllocations {
     ram_region_start: *mut (),
     ram_region_length: usize,
     flash_region_start: *mut (),
     flash_region_length: usize,
-    _lt: PhantomData<&'a ()>,
 }
 
-unsafe impl AllocTracker for TockRv32iCRtAllocTracker<'_> {
+impl TockRv32iCRtAllocations {
     fn is_valid(&self, ptr: *const (), len: usize) -> bool {
         let is_valid_flash = (ptr as usize) >= (self.flash_region_start as usize)
             && ((ptr as usize)
@@ -43,6 +45,48 @@ unsafe impl AllocTracker for TockRv32iCRtAllocTracker<'_> {
                 .checked_add(len)
                 .map(|end| end <= (self.ram_region_start as usize) + self.ram_region_length)
                 .unwrap_or(false))
+    }
+}
+
+#[derive(Debug)]
+pub struct TockRv32iCCallbackDescriptor<'a> {
+    _wrapper: unsafe extern "C" fn(*mut c_void),
+    _user_data: *mut c_void,
+    _lt: PhantomData<&'a mut c_void>,
+}
+
+#[derive(Debug)]
+pub enum TockRv32iCRtAllocChain<'a> {
+    BaseAllocations(TockRv32iCRtAllocations),
+    CallbackDescriptor(
+        TockRv32iCCallbackDescriptor<'a>,
+        &'a mut TockRv32iCRtAllocChain<'a>,
+    ),
+}
+
+impl<'a> TockRv32iCRtAllocChain<'a> {
+    fn get_base_allocations(&self) -> &TockRv32iCRtAllocations {
+        let mut cur = self;
+        loop {
+            match cur {
+                TockRv32iCRtAllocChain::BaseAllocations(base) => {
+                    return base;
+                }
+                TockRv32iCRtAllocChain::CallbackDescriptor(_, pred) => {
+                    cur = pred;
+                }
+            }
+        }
+    }
+}
+
+unsafe impl AllocTracker for TockRv32iCRtAllocChain<'_> {
+    fn is_valid(&self, ptr: *const (), len: usize) -> bool {
+        self.get_base_allocations().is_valid(ptr, len)
+    }
+
+    fn is_valid_mut(&self, ptr: *mut (), len: usize) -> bool {
+        self.get_base_allocations().is_valid_mut(ptr, len)
     }
 }
 
@@ -215,19 +259,24 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         binary: EncapfnBinary,
         ram_region_start: *mut (),
         ram_region_length: usize,
-	addl_mpu_regions: impl Iterator<Item = (kernel::platform::mpu::Region, kernel::platform::mpu::Permissions)>,
+        addl_mpu_regions: impl Iterator<
+            Item = (
+                kernel::platform::mpu::Region,
+                kernel::platform::mpu::Permissions,
+            ),
+        >,
         _branding: ID,
     ) -> Result<
         (
             Self,
-            AllocScope<'static, TockRv32iCRtAllocTracker<'static>, ID>,
+            AllocScope<'static, TockRv32iCRtAllocChain<'static>, ID>,
             AccessScope<ID>,
         ),
         TockEFError,
     > {
         // See the TockRv32iCRt type definition for an explanation of this
         // const assertion. It is required to allow us to index into fields
-        // of the nested `TockRv32iCRtAllocTracker` struct from within assembly.
+        // of the nested `TockRv32iCRtAllocChain` struct from within assembly.
         //
         // Unfortunately, we cannot make this into a const assertion, as
         // constants are instantiated outside of the `impl` block.
@@ -263,18 +312,18 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             mpu::Permissions::ReadWriteOnly,
             &mut mpu_config,
         )
-            .unwrap();
+        .unwrap();
 
-	for (region, permissions) in addl_mpu_regions {
-	    mpu.allocate_region(
-		region.start_address(),
-		region.size(),
-		region.size(),
-		permissions,
-		&mut mpu_config,
+        for (region, permissions) in addl_mpu_regions {
+            mpu.allocate_region(
+                region.start_address(),
+                region.size(),
+                region.size(),
+                permissions,
+                &mut mpu_config,
             )
-		.unwrap();
-	}
+            .unwrap();
+        }
 
         // Construct an initial runtime instance. We don't yet know where our
         // `foreign_stack_top` should be placed -- that will depend on how much
@@ -308,22 +357,23 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         Ok((
             rt,
             unsafe {
-                AllocScope::new(TockRv32iCRtAllocTracker {
-                    ram_region_start,
-                    ram_region_length,
-                    flash_region_start: binary.binary_start as *const _ as *mut (),
-                    flash_region_length: binary.binary_length,
-                    _lt: PhantomData,
-                })
+                AllocScope::new(TockRv32iCRtAllocChain::BaseAllocations(
+                    TockRv32iCRtAllocations {
+                        ram_region_start,
+                        ram_region_length,
+                        flash_region_start: binary.binary_start as *const _ as *mut (),
+                        flash_region_length: binary.binary_length,
+                    },
+                ))
             },
             unsafe { AccessScope::new() },
         ))
     }
 
-    pub fn init(&self) -> EFResult<()> {
+    fn init(&self) -> EFResult<()> {
         let mut res = TockRv32iCInvokeRes::new();
 
-        self.execute(|| unsafe {
+        self.execute_int_configure_mpu(|| unsafe {
             Self::foreign_runtime_init(
                 self.rthdr_addr as usize,
                 0,
@@ -350,6 +400,17 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             .set(res.inner.sp as *mut ());
 
         Ok(EFCopy::new(()))
+    }
+
+    fn execute_int_configure_mpu<R, F: FnOnce() -> R>(&self, f: F) -> R {
+        self.mpu.configure_mpu(&self.mpu_config);
+        self.mpu.enable_app_mpu();
+
+        let res = f();
+
+        self.mpu.disable_app_mpu();
+
+        res
     }
 
     #[cfg(not(any(target_arch = "riscv32", target_arch = "riscv64")))]
@@ -947,14 +1008,14 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             && a7_mepc == ef_tock_rv32i_c_rt_cb_springboard as usize
         {
             unimplemented!(
-		"Function attempted to perform a callback: {:08x} {:08x} {:p} {:p} {:p} {:08x} {:08x} {:08x}",
-		a0, a1, a2_rt, a3_invoke_res, a4_fsp, a5_mcause, a6_mtval, a7_mepc,
-	    );
+                "Function attempted to perform a callback: {:08x} {:08x} {:p} {:p} {:p} {:08x} {:08x} {:08x}",
+                a0, a1, a2_rt, a3_invoke_res, a4_fsp, a5_mcause, a6_mtval, a7_mepc,
+            );
         } else {
             // TODO: encode proper error here!
             panic!(
                 "Function faulted:\r\n\
-		 a0={:08x}, a1={:08x}, rt={:p}, invoke_res={:p},\r\n\
+                 a0={:08x}, a1={:08x}, rt={:p}, invoke_res={:p},\r\n\
                  fsp={:p}, mcause={:08x} mtval={:08x} mepc={:08x}",
                 a0, a1, a2_rt, a3_invoke_res, a4_fsp, a5_mcause, a6_mtval, a7_mepc,
             );
@@ -964,8 +1025,10 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
 
 unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
     type ID = ID;
-    type AllocTracker<'a> = TockRv32iCRtAllocTracker<'a>;
+    type AllocTracker<'a> = TockRv32iCRtAllocChain<'a>;
     type ABI = Rv32iCABI;
+    type CallbackTrampolineFn = CallbackTrampolineFn;
+    type CallbackCtx = ();
 
     // We don't have any symbol table state, as the Tock EF binary
     // already contains a symbol table that we can use.
@@ -990,7 +1053,7 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
     fn lookup_symbol<const SYMTAB_SIZE: usize, const FIXED_OFFSET_SYMTAB_SIZE: usize>(
         &self,
         _compact_symtab_index: usize,
-	fixed_offset_symtab_index: usize,
+        fixed_offset_symtab_index: usize,
         _symtabstate: &Self::SymbolTableState<SYMTAB_SIZE, FIXED_OFFSET_SYMTAB_SIZE>,
     ) -> Option<*const ()> {
         if fixed_offset_symtab_index < self.fntab_length {
@@ -1000,15 +1063,33 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
         }
     }
 
-    fn execute<R, F: FnOnce() -> R>(&self, f: F) -> R {
-        self.mpu.configure_mpu(&self.mpu_config);
-        self.mpu.enable_app_mpu();
+    fn execute<R, F: FnOnce() -> R>(
+        &self,
+        _alloc_scope: &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
+        _access_scope: &mut AccessScope<Self::ID>,
+        f: F,
+    ) -> R {
+        self.execute_int_configure_mpu(f)
+    }
 
-        let res = f();
-
-        self.mpu.disable_app_mpu();
-
-        res
+    fn setup_callback<'a, C, F, R>(
+        &self,
+        _callback: &'a mut C,
+        _alloc_scope: &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
+        _fun: F,
+    ) -> Result<R, EFError>
+    where
+        C: FnMut(
+            &Self::CallbackCtx,
+            &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
+            &mut AccessScope<Self::ID>,
+        ),
+        F: for<'b> FnOnce(
+            *const Self::CallbackTrampolineFn,
+            &'b mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
+        ) -> R,
+    {
+        unimplemented!();
     }
 
     // We provide only the required implementations and rely on default

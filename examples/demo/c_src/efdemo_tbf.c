@@ -7,6 +7,7 @@ fnptr const
 __attribute__ ((section (".encapfn_hdr")))
 encapfn_fntab[1] = {
     /* 0 */ (fnptr) demo_nop,
+    /* 0 */ (fnptr) demo_invoke_callback,
 };
 
 __attribute__ ((section (".encapfn_hdr")))
