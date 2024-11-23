@@ -127,7 +127,13 @@ pub unsafe fn main() {
                                             ipaddr.as_ptr().into(),
                                             state,
                                             Some(netif_init),
-                                            Some(lwip::netif_input), // TODO: Switch this to use callback_ptr
+                                            // TODO: Switch this to some safe wrapper.
+                                            unsafe { 
+                                                core::mem::transmute::<
+                                                    *const extern "C" fn(), 
+                                                    Option<unsafe extern "C" fn(*mut lwip::pbuf, *mut lwip::netif) -> i8>
+                                                >(callback_ptr as *const _)
+                                            }, 
                                             alloc4,
                                             &mut access,
                                         )
