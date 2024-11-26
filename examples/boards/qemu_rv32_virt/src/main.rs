@@ -67,6 +67,7 @@ pub unsafe fn main() {
 
         // Test callbacks!
         encapfn_example_demo::test_libdemo_callback(&bound_rt, &mut alloc, &mut access);
+        debug!("Ran test_libdemo_callback with the MockRt!");
     });
 
     encapfn::branding::new(|brand| {
@@ -100,6 +101,10 @@ pub unsafe fn main() {
         // Run a test:
         encapfn_example_demo::test_libdemo(&bound_rt, &mut alloc, &mut access);
         debug!("Ran test_libdemo with the Rv32iCRt!");
+
+        // Test callbacks!
+        encapfn_example_demo::test_libdemo_callback(&bound_rt, &mut alloc, &mut access);
+        debug!("Ran test_libdemo_callback with the Rv32iCRt!");
     });
 
     // Acquire required capabilities

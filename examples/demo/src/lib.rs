@@ -8,6 +8,7 @@ use encapfn::types::{AccessScope, AllocScope};
 
 // Includes bindgen magic:
 #[allow(non_upper_case_globals)]
+#[allow(non_camel_case_types)]
 pub mod libdemo {
     include!(concat!(env!("OUT_DIR"), "/libdemo_bindings.rs"));
 }
@@ -50,29 +51,39 @@ pub fn test_libdemo_callback<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT
     alloc: &mut AllocScope<RT::AllocTracker<'_>, RT::ID>,
     access: &mut AccessScope<RT::ID>,
 ) {
+    let mut callback_called_counter: usize = 0;
+
     lib.rt()
         .setup_callback(
-            &mut |ctx, _alloc, _access| {
-                panic!("Callback called, context: {:?}", ctx);
+            &mut |ctx, _ret, _alloc, _access| {
+                callback_called_counter += 1;
+                if callback_called_counter == 3 {
+                    panic!("Callback called third time, context: {:x?}", ctx);
+                }
             },
             alloc,
             |callback_ptr, alloc| {
-                lib
-                    .demo_invoke_callback(
-                        unsafe {
-                            // TODO: provide a safe method to perform this cast
-                            core::mem::transmute::<
-                                *const extern "C" fn(),
-                                Option<unsafe extern "C" fn()>,
-                            >(callback_ptr as *const _)
-                        },
-			alloc,
-                        access,
-                    )
-                    .unwrap()
-                    .validate()
-                    .unwrap();
+                lib.demo_invoke_callback(
+                    // Change to a 3 to trigger the above panic:
+                    2,
+                    // 3,
+                    unsafe {
+                        // TODO: provide a safe method to perform this cast
+                        core::mem::transmute::<
+                            *const extern "C" fn(),
+                            Option<unsafe extern "C" fn(usize, usize, usize)>,
+                        >(callback_ptr as *const _)
+                    },
+                    // None,
+                    alloc,
+                    access,
+                )
+                .unwrap()
+                .validate()
+                .unwrap();
             },
         )
         .unwrap();
+
+    kernel::debug!("Callback called {} times", callback_called_counter);
 }

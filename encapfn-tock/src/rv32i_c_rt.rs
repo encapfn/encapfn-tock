@@ -17,8 +17,52 @@ use encapfn::{EFError, EFResult};
 
 use crate::binary::{EncapfnBinary, EncapfnBinaryParsed};
 
+const MCAUSE_INSTRUCTION_ACCESS_FAULT: usize = 1;
+const MCAUSE_ILLEGAL_INSTRUCTION: usize = 2;
+const MCAUSE_ENV_CALL_UMODE: usize = 8;
+
+#[repr(C)]
+pub struct CallbackTrampolineFnReturn {
+    reg0: usize,
+    reg1: usize,
+}
+
 // Use 8 arguments, as that's how many are passed in registers on RISC-V.
-type CallbackTrampolineFn = extern "C" fn(usize, usize, usize, usize, usize, usize, usize, usize);
+type CallbackTrampolineFn = extern "C" fn(
+    usize,
+    usize,
+    usize,
+    usize,
+    usize,
+    usize,
+    usize,
+    usize,
+) -> CallbackTrampolineFnReturn;
+
+#[derive(Clone, Debug)]
+pub struct TockRv32iCRtCallbackAsmContext {
+    foreign_stack_ptr: *mut (),
+    runtime: *mut TockRv32iCRtAsmState,
+    ret_a0: usize,
+    ret_a1: usize,
+}
+
+#[derive(Debug, Clone)]
+pub struct CallbackContext {
+    pub arg_regs: [usize; 8],
+}
+
+#[derive(Debug, Clone)]
+pub struct CallbackReturn {
+    pub ret_regs: [usize; 2],
+}
+
+const CALLBACK_CONTEXT_PLUS_POINTER_SIZE: usize =
+    core::mem::size_of::<TockRv32iCRtCallbackAsmContext>()
+        + core::mem::size_of::<*mut TockRv32iCRtCallbackAsmContext>();
+
+const CALLBACK_CONTEXT_PLUS_POINTER_STACKED_SIZE: usize =
+    (CALLBACK_CONTEXT_PLUS_POINTER_SIZE + 15) & !15;
 
 #[derive(Clone, Debug)]
 pub struct TockRv32iCRtAllocations {
@@ -50,9 +94,30 @@ impl TockRv32iCRtAllocations {
 
 #[derive(Debug)]
 pub struct TockRv32iCCallbackDescriptor<'a> {
-    _wrapper: unsafe extern "C" fn(*mut c_void),
-    _user_data: *mut c_void,
+    // filled in with an illegal instruction opcode (0x00000000)
+    springboard: u32,
+    wrapper:
+        unsafe extern "C" fn(*mut c_void, &CallbackContext, &mut CallbackReturn, *mut (), *mut ()),
+    context: *mut c_void,
     _lt: PhantomData<&'a mut c_void>,
+}
+
+impl TockRv32iCCallbackDescriptor<'_> {
+    unsafe fn invoke(
+        &self,
+        callback_ctx: &CallbackContext,
+        callback_ret: &mut CallbackReturn,
+        alloc_scope: *mut (),
+        access_scope: *mut (),
+    ) {
+        (self.wrapper)(
+            self.context,
+            callback_ctx,
+            callback_ret,
+            alloc_scope,
+            access_scope,
+        )
+    }
 }
 
 #[derive(Debug)]
@@ -60,8 +125,9 @@ pub enum TockRv32iCRtAllocChain<'a> {
     BaseAllocations(TockRv32iCRtAllocations),
     CallbackDescriptor(
         TockRv32iCCallbackDescriptor<'a>,
-        &'a mut TockRv32iCRtAllocChain<'a>,
+        &'a TockRv32iCRtAllocChain<'a>,
     ),
+    Cons(&'a TockRv32iCRtAllocChain<'a>),
 }
 
 impl<'a> TockRv32iCRtAllocChain<'a> {
@@ -73,6 +139,9 @@ impl<'a> TockRv32iCRtAllocChain<'a> {
                     return base;
                 }
                 TockRv32iCRtAllocChain::CallbackDescriptor(_, pred) => {
+                    cur = pred;
+                }
+                TockRv32iCRtAllocChain::Cons(pred) => {
                     cur = pred;
                 }
             }
@@ -225,6 +294,10 @@ pub struct TockRv32iCRtAsmState {
     // TODO: doc
     ram_region_start: *mut (),
     ram_region_length: usize,
+
+    // Allocation scope active across an invocation of generic_invoke,
+    // set in the `execute` hook:
+    active_alloc_scope: Cell<*mut ()>,
 }
 
 #[repr(C)]
@@ -338,6 +411,7 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
                 foreign_stack_bottom: ram_region_start,
                 ram_region_start,
                 ram_region_length,
+                active_alloc_scope: Cell::new(core::ptr::null_mut()),
             },
 
             binary,
@@ -352,22 +426,27 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             _id: PhantomData::<ID>,
         };
 
+        let mut alloc_scope = unsafe {
+            AllocScope::new(TockRv32iCRtAllocChain::BaseAllocations(
+                TockRv32iCRtAllocations {
+                    ram_region_start,
+                    ram_region_length,
+                    flash_region_start: binary.binary_start as *const _ as *mut (),
+                    flash_region_length: binary.binary_length,
+                },
+            ))
+        };
+        rt.asm_state
+            .active_alloc_scope
+            .set(&mut alloc_scope as *mut _ as *mut ());
+
         rt.init()?;
 
-        Ok((
-            rt,
-            unsafe {
-                AllocScope::new(TockRv32iCRtAllocChain::BaseAllocations(
-                    TockRv32iCRtAllocations {
-                        ram_region_start,
-                        ram_region_length,
-                        flash_region_start: binary.binary_start as *const _ as *mut (),
-                        flash_region_length: binary.binary_length,
-                    },
-                ))
-            },
-            unsafe { AccessScope::new() },
-        ))
+        // Reset the active scope to force a null-pointer exception for
+        // generic_invoke executions that don't pass through `execute`:
+        rt.asm_state.active_alloc_scope.set(core::ptr::null_mut());
+
+        Ok((rt, alloc_scope, unsafe { AccessScope::new() }))
     }
 
     fn init(&self) -> EFResult<()> {
@@ -465,6 +544,130 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         {
             let _: _ = Self::encode_return;
         }
+    }
+
+    unsafe extern "C" fn callback_handler(
+        // Argument registers:
+        a0: usize,
+        a1: usize,
+        a2: usize,
+        a3: usize,
+        a4: usize,
+        a5: usize,
+        a6: usize,
+        a7: usize,
+        // Stacked:
+        callback_asm_ctx_ptr: *mut TockRv32iCRtCallbackAsmContext,
+    ) -> usize {
+        let mcause: usize;
+        core::arch::asm!(
+            "csrr {mcause_reg}, mcause",
+            options(pure, nomem),
+            mcause_reg = out(reg) mcause
+        );
+
+        let mepc: usize;
+        core::arch::asm!(
+            "csrr {mepc_reg}, mepc",
+            options(pure, nomem),
+            mepc_reg = out(reg) mepc
+        );
+
+        // ecall -> function return
+        let ecall_function_return = mcause == MCAUSE_ENV_CALL_UMODE;
+
+        // instruction access fault at return springboard -> function return
+        let iaf_function_return = mcause == MCAUSE_INSTRUCTION_ACCESS_FAULT
+            && mepc == ef_tock_rv32i_c_rt_ret_springboard as usize;
+
+        let function_return = ecall_function_return || iaf_function_return;
+
+        // callbacks must be triggered through an instruction access fault or an
+        // ILLEGAL_INSTRUCTION exception:
+        let callback_fault =
+            mcause == MCAUSE_INSTRUCTION_ACCESS_FAULT || mcause == MCAUSE_ILLEGAL_INSTRUCTION;
+
+        if function_return || !callback_fault {
+            // Either a function return or other non-callback fault, return:
+            return 0;
+        }
+
+        // This _is_ a callback, handle it!
+
+        let callback_asm_ctx = &mut *callback_asm_ctx_ptr;
+        let runtime = &*callback_asm_ctx.runtime;
+        let alloc_scope = &*(runtime.active_alloc_scope.get()
+            as *mut AllocScope<'_, <Self as EncapfnRt>::AllocTracker<'_>, <Self as EncapfnRt>::ID>);
+
+        // Check if the faulting instruction coincides with an alloc_scope chain
+        // callback descriptor's illegal instruction placeholder:
+        let mut cur = alloc_scope.tracker();
+
+        let callback_desc = loop {
+            match cur {
+                TockRv32iCRtAllocChain::BaseAllocations(_) => {
+                    // No callback found:
+                    break None;
+                }
+                TockRv32iCRtAllocChain::CallbackDescriptor(desc, pred) => {
+                    // Check if this callback has a matching springboard:
+                    let springboard_ptr = unsafe {
+                        (desc as *const TockRv32iCCallbackDescriptor as *const ()).byte_offset(
+                            core::mem::offset_of!(TockRv32iCCallbackDescriptor, springboard)
+                                as isize,
+                        )
+                    };
+
+                    if mepc == springboard_ptr as usize {
+                        // Springboard matches this callback:
+                        break Some(desc);
+                    } else {
+                        // Check the predecessor:
+                        cur = pred;
+                    }
+                }
+                TockRv32iCRtAllocChain::Cons(pred) => {
+                    cur = pred;
+                }
+            }
+        };
+
+        let callback_desc = if let Some(desc) = callback_desc {
+            desc
+        } else {
+            // This is not a callback invocation, proceed returning to the kernel:
+            return 0;
+        };
+
+        // Construct a CallbackContext from the arguments to this function:
+        let callback_ctx = CallbackContext {
+            arg_regs: [a0, a1, a2, a3, a4, a5, a6, a7],
+        };
+
+        // Construct a default CallbackReturn:
+        let mut callback_ret = CallbackReturn { ret_regs: [0; 2] };
+
+        // Execute the interrupt handler function.
+        //
+        // TODO: In the future, we should transition this out of the trap
+        // handler to allow for nested domain switches.
+        let mut inner_alloc_scope: AllocScope<'_, TockRv32iCRtAllocChain<'_>, ID> =
+            AllocScope::new(TockRv32iCRtAllocChain::Cons(alloc_scope.tracker()));
+
+        callback_desc.invoke(
+            &callback_ctx,
+            &mut callback_ret,
+            &mut inner_alloc_scope as *mut _ as *mut (),
+            // Safe, as this should only be triggered by foreign code, when the only
+            // existing AccessScope<ID> is already borrowed by the trampoline:
+            &mut AccessScope::<ID>::new() as *mut _ as *mut (),
+        );
+
+        callback_asm_ctx.ret_a0 = callback_ret.ret_regs[0];
+        callback_asm_ctx.ret_a1 = callback_ret.ret_regs[1];
+
+        // This was a callback!
+        1
     }
 
     #[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))]
@@ -847,7 +1050,7 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
                 mv   a0, s1     // a0 = s1 (mcause)
                 jal  ra, _disable_interrupt_trap_rust_from_app
 
-                // Restore reigsters from the stack:
+                // Restore registers from the stack:
                 lw    x1, 19*4(sp) // ra
                 lw    x5, 20*4(sp) // t0
                 lw    x6, 21*4(sp) // t1
@@ -885,21 +1088,124 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
                 mret
 
               700: // _start_ef_trap_continue
-                // This was not an interrupt. We need to extract all required
+                // This was not an interrupt, it may be a return/fault (handled
+                // identically), or a callback.
+                //
+                // For fault / return we need to extract all required
                 // information, restore the kernel trap handler, kernel state,
                 // and then hand off to a final Rust function that encodes the
                 // return value into the provided
-                // `&mut TockRv32iCRtInvokeResInner`. Instead of calling this
-                // function through a branch, jump, or jump and link (which
-                // would be wrong, since we require a tail-call), we use the
-                // return from the trap handler to implement this call. This
-                // also guarantees atomicity of the CSRs we read, as traps are
-                // non-reentrant.
+                // `&mut TockRv32iCRtInvokeResInner`.
+                //
+                // Handling a callback is simpler. In that case, we can simply
+                // invoke a C-ABI callback handler and assume that the app
+                // has already saved all required registers. We thus call this
+                // function here, in the context of the trap handler.
+                //
+                // To do so, we need to restore a couple of registers and
+                // populate a CallbackAsmContext struct that we pass to the
+                // handler. We already have space for this on the Rust
+                // stack.
 
-                // Restore the kernel trap handler. `mscratch` currently
-                // contains the function's s0, which we don't need to save.
-                // Hence discard it.
-                csrw  mscratch, zero
+                // First, save the foreign stack pointer onto our stack and
+                // create a copy in t0 for code below:
+                sw    x2, 35*4(s0)
+                mv    t0, x2
+
+                // Now, we can restore the Rust stack pointer:
+                mv    sp, s0
+
+                // We reset mscratch to 0 (kernel trap handler mode), to ensure
+                // that all faults in the callback handler function are handled
+                // as kernel faults. This also restores the function's s0.
+                csrrw s0, mscratch, zero
+
+                // Now, continue to save the remaining registers. Using `sp`
+                // will allow all of these to be compressed instructions:
+                sw   x11, 24*4(sp) // a1
+                sw   x10, 23*4(sp) // a0
+                sw    x4, 37*4(sp) // tp
+                sw    x3, 36*4(sp) // gp
+                sw    x1, 19*4(sp) // ra
+
+                // Restore some important context for Rust, namely the thread-
+                // and global-pointers:
+                lw    x4,  6*4(sp) // tp
+                lw    x3,  5*4(sp) // gp
+
+                // Push a callback context struct onto the stack, place
+                // a pointer to it at the new stack offset, and populate it:
+                // lw t0, ({callback_ctx_ptr_size} + 35*4)(sp) // foreign stack pointer, t0
+                addi  sp, sp, -{callback_ctx_ptr_size}
+                sw    t0, ({callback_ctx_foreign_stack_ptr_offset} + 4)(sp)
+                lw    t0, ({callback_ctx_ptr_size} + 3*4)(sp)
+                sw    t0, ({callback_ctx_runtime_offset} + 4)(sp)
+
+                addi  t0, sp, 4
+                sw    t0, 0*4(sp)
+
+                // Try to handle this as a callback. We leave a0 -- a7 as
+                // populated by foreign code. This function will pick up
+                // the CallbackAsmContext struct located on the stack, and
+                // pointed to by the current stack pointer (first non-register
+                // argument).
+                jal   ra, {callback_handler}
+
+                // Check if this callback was successfully handled.
+                beqz  a0, 800f     // not a callback, return.
+
+                // Return from the callback. For this, we must restore the saved registers
+                // above and load the return value registers prepared by the callback handler.
+                //
+                // Load the return values into a0 and a1:
+                lw    a0, ({callback_ctx_ret_a0_offset} + 4)(sp)
+                lw    a1, ({callback_ctx_ret_a1_offset} + 4)(sp)
+
+                // Pop the CallbackAsmContext stack frame:
+                addi  sp, sp, {callback_ctx_ptr_size}
+
+                // Restore the other saved foreign function registers:
+                lw    x4, 37*4(sp) // foreign tp
+                lw    x3, 36*4(sp) // foreign gp
+                lw    x1, 19*4(sp) // foreign ra
+
+                // Load the app's return address register (in ra / x1) into mepc:
+                csrw  mepc, x1     // foreign ra, return to requested return address
+
+                // Reset the trap handler by switching our kernel stack into
+                // `mscratch` again. We discard its current value, which must
+                // be zero (kernel trap handler mode).
+                csrw  mscratch, sp
+
+                // Restore the function's s1, as it was clobbered by the trap
+                // handler:
+                lw    x9, 0*4(sp)
+
+                // Finally, load back the functions's stack pointer,
+                // the last register:
+                lw    x2, 35*4(sp) // sp
+
+                // Return to the function:
+                mret
+
+              800: // _return_from_ef
+                // This was not a valid callback. We need to return to the
+                // surrounding Rust code, and return from the trap handler.
+                //
+                // Instead of returning through a branch, jump, or jump and
+                // link (which would be wrong, since we require a tail-call),
+                // we use the return from the trap handler to implement this
+                // call. This also guarantees atomicity of the CSRs we read,
+                // as traps are non-reentrant.
+                //
+                // We already restored the kernel trap handler above.
+                //
+                // Pop the CallbackAsmContext stack frame:
+                addi  sp, sp, {callback_ctx_ptr_size}
+
+                // Restore saved application registers:
+                lw   x11, 24*4(sp) // a1 (return value)
+                lw   x10, 23*4(sp) // a0 (return value)
 
                 // Need to set mstatus.MPP to 0b11 so that we stay in machine
                 // mode upon returning from this interrupt context.
@@ -916,13 +1222,12 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
                 // into s0, and saving the function's s1 onto 0*4(s0)), we also
                 // have the mcause CSR loaded into `s1`. We move it into `a5`,
                 // as expected by the function encoding the return register.
-                mv   a5, s1         // a5 = s1 (mcause, as loaded above)
+                mv    a5, s1        // a5 = s1 (mcause, as loaded above)
 
-                // We restore our `sp`. We want to keep the function's `sp` for
-                // diagnostics purposes, and thus store it into `a5` (to be
-                // passed to the function encoding the return value).
-                mv    a4, sp        // a4 = foreign stack pointer
-                mv    sp, s0        // sp = Rust stack pointer, from mscratch
+                // We want to keep the function's `sp` for diagnostics purposes,
+                // and thus store it into `a4` (to be passed to the function
+                // encoding the return value).
+                lw    a4, 35*4(sp)  // a4 = foreign stack pointer
 
                 // Load the remaining CSRs to be passed as an argument, `mtval`:
                 csrr  a6, mtval     // a6 = mtval CSR
@@ -941,8 +1246,8 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
                 lw    ra,  2*4(sp)  // ra
 
                 // Restore all other caller-saved kernel registers:
-                lw    x3,  5*4(sp)  // gp
-                lw    x4,  6*4(sp)  // tp
+                // lw x3,  5*4(sp)  // gp, loaded above
+                // lw x4,  6*4(sp)  // tp, loaded above
                 lw    x8,  7*4(sp)  // s0 / fp
                 lw    x9,  8*4(sp)  // s1
                 lw   x18,  9*4(sp)  // s2
@@ -972,9 +1277,20 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             // Function & springboard symbols:
             ret_springboard_sym = sym ef_tock_rv32i_c_rt_ret_springboard,
             encode_ret_sym = sym Self::encode_return,
+            callback_handler = sym Self::callback_handler,
             // Runtime ASM state offsets:
             rtas_foreign_stack_ptr_offset = const core::mem::offset_of!(TockRv32iCRtAsmState, foreign_stack_ptr),
             rtas_foreign_stack_bottom_offset = const core::mem::offset_of!(TockRv32iCRtAsmState, foreign_stack_bottom),
+            // Callback context + pointer stack frame size:
+            callback_ctx_ptr_size = const CALLBACK_CONTEXT_PLUS_POINTER_STACKED_SIZE,
+            callback_ctx_foreign_stack_ptr_offset = const core::mem::offset_of!(
+                TockRv32iCRtCallbackAsmContext, foreign_stack_ptr),
+            callback_ctx_runtime_offset = const core::mem::offset_of!(
+                TockRv32iCRtCallbackAsmContext, runtime),
+            callback_ctx_ret_a0_offset = const core::mem::offset_of!(
+                TockRv32iCRtCallbackAsmContext, ret_a0),
+            callback_ctx_ret_a1_offset = const core::mem::offset_of!(
+                TockRv32iCRtCallbackAsmContext, ret_a1),
         );
     }
 
@@ -988,10 +1304,6 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         a6_mtval: usize,
         a7_mepc: usize,
     ) {
-        const MCAUSE_INSTRUCTION_ACCESS_FAULT: usize = 1;
-        const MCAUSE_ILLEGAL_INSTRUCTION: usize = 2;
-        const MCAUSE_ENV_CALL_UMODE: usize = 8;
-
         // Determine whether the function faulted, returned to the kernel using
         // a regular `ecall` instruction, or tried to return, or tried to issue
         // a callback.
@@ -1004,13 +1316,6 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             a3_invoke_res.a0 = a0;
             a3_invoke_res.a1 = a1;
             a3_invoke_res.sp = a4_fsp;
-        } else if a5_mcause == MCAUSE_ILLEGAL_INSTRUCTION
-            && a7_mepc == ef_tock_rv32i_c_rt_cb_springboard as usize
-        {
-            unimplemented!(
-                "Function attempted to perform a callback: {:08x} {:08x} {:p} {:p} {:p} {:08x} {:08x} {:08x}",
-                a0, a1, a2_rt, a3_invoke_res, a4_fsp, a5_mcause, a6_mtval, a7_mepc,
-            );
         } else {
             // TODO: encode proper error here!
             panic!(
@@ -1021,6 +1326,93 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
             );
         }
     }
+
+    fn setup_callback_int<'a, C, F, R>(
+        &self,
+        callback: &'a mut C,
+        alloc_scope: &mut AllocScope<
+            '_,
+            <Self as EncapfnRt>::AllocTracker<'_>,
+            <Self as EncapfnRt>::ID,
+        >,
+        fun: F,
+    ) -> Result<R, EFError>
+    where
+        C: FnMut(
+            &<Self as EncapfnRt>::CallbackContext,
+            &mut <Self as EncapfnRt>::CallbackReturn,
+            *mut (),
+            *mut (),
+        ),
+        F: for<'b> FnOnce(
+            *const <Self as EncapfnRt>::CallbackTrampolineFn,
+            &'b mut AllocScope<'_, <Self as EncapfnRt>::AllocTracker<'_>, <Self as EncapfnRt>::ID>,
+        ) -> R,
+    {
+        struct Context<'a, ClosureTy> {
+            closure: &'a mut ClosureTy,
+        }
+
+        unsafe extern "C" fn callback_wrapper<
+            'a,
+            ClosureTy: FnMut(&CallbackContext, &mut CallbackReturn, *mut (), *mut ()) + 'a,
+        >(
+            ctx_ptr: *mut c_void,
+            callback_ctx: &CallbackContext,
+            callback_ret: &mut CallbackReturn,
+            alloc_scope: *mut (),
+            access_scope: *mut (),
+        ) {
+            let ctx: &mut Context<'a, ClosureTy> =
+                unsafe { &mut *(ctx_ptr as *mut Context<'a, ClosureTy>) };
+
+            // For now, we assume that the functoin doesn't unwind:
+            (ctx.closure)(callback_ctx, callback_ret, alloc_scope, access_scope)
+        }
+
+        // Ensure that the context pointer is compatible in size and
+        // layout to a c_void pointer:
+        assert_eq!(
+            core::mem::size_of::<*mut c_void>(),
+            core::mem::size_of::<*mut Context<'a, C>>()
+        );
+        assert_eq!(
+            core::mem::align_of::<*mut c_void>(),
+            core::mem::align_of::<*mut Context<'a, C>>()
+        );
+
+        let mut ctx: Context<'a, C> = Context { closure: callback };
+
+        // TODO: does this need to be pinned?
+        let mut inner_alloc_scope = unsafe {
+            AllocScope::new(TockRv32iCRtAllocChain::CallbackDescriptor(
+                TockRv32iCCallbackDescriptor {
+                    springboard: 0x00000000, // RISC-V unimp
+                    wrapper: callback_wrapper::<C>,
+                    context: &mut ctx as *mut _ as *mut c_void,
+                    _lt: PhantomData::<&'a mut c_void>,
+                },
+                alloc_scope.tracker(),
+            ))
+        };
+
+        let springboard_ptr = unsafe {
+            (inner_alloc_scope.tracker() as *const TockRv32iCRtAllocChain as *const ())
+                .byte_offset(
+                    core::mem::offset_of!(TockRv32iCRtAllocChain, CallbackDescriptor.0) as isize,
+                )
+                .byte_offset(
+                    core::mem::offset_of!(TockRv32iCCallbackDescriptor, springboard) as isize,
+                )
+        };
+
+        let res = fun(
+            springboard_ptr as *const CallbackTrampolineFn,
+            &mut inner_alloc_scope,
+        );
+
+        Ok(res)
+    }
 }
 
 unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
@@ -1028,7 +1420,8 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
     type AllocTracker<'a> = TockRv32iCRtAllocChain<'a>;
     type ABI = Rv32iCABI;
     type CallbackTrampolineFn = CallbackTrampolineFn;
-    type CallbackCtx = ();
+    type CallbackContext = CallbackContext;
+    type CallbackReturn = CallbackReturn;
 
     // We don't have any symbol table state, as the Tock EF binary
     // already contains a symbol table that we can use.
@@ -1063,24 +1456,16 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
         }
     }
 
-    fn execute<R, F: FnOnce() -> R>(
-        &self,
-        _alloc_scope: &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
-        _access_scope: &mut AccessScope<Self::ID>,
-        f: F,
-    ) -> R {
-        self.execute_int_configure_mpu(f)
-    }
-
     fn setup_callback<'a, C, F, R>(
         &self,
-        _callback: &'a mut C,
-        _alloc_scope: &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
-        _fun: F,
+        callback: &'a mut C,
+        alloc_scope: &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
+        fun: F,
     ) -> Result<R, EFError>
     where
         C: FnMut(
-            &Self::CallbackCtx,
+            &Self::CallbackContext,
+            &mut Self::CallbackReturn,
             &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
             &mut AccessScope<Self::ID>,
         ),
@@ -1089,7 +1474,50 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
             &'b mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
         ) -> R,
     {
-        unimplemented!();
+        let typecast_callback =
+            &mut |callback_ctx: &CallbackContext,
+                  callback_ret: &mut CallbackReturn,
+                  alloc_scope_ptr: *mut (),
+                  access_scope_ptr: *mut ()| {
+                let alloc_scope = unsafe {
+                    &mut *(alloc_scope_ptr as *mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>)
+                };
+
+                let access_scope =
+                    unsafe { &mut *(access_scope_ptr as *mut AccessScope<Self::ID>) };
+
+                callback(callback_ctx, callback_ret, alloc_scope, access_scope);
+            };
+
+        // We need to erase the type-dependence of the closure argument on `ID`,
+        // as that creates life-time issues when the `MockRtAllocChain` is
+        // parameterized over it:
+        self.setup_callback_int(typecast_callback, alloc_scope, fun)
+    }
+
+    fn execute<R, F: FnOnce() -> R>(
+        &self,
+        alloc_scope: &mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>,
+        _access_scope: &mut AccessScope<Self::ID>,
+        f: F,
+    ) -> R {
+        // Store a reference to the alloc_scope in the Runtime struct,
+        // such that it can be retrieved later in a callback. After the function
+        // finished executing, restore the old value:
+        let prev_active_alloc_scope = self.asm_state.active_alloc_scope.get();
+        self.asm_state
+            .active_alloc_scope
+            .set(alloc_scope as *mut _ as *mut ());
+        // panic!("Other context: {:?}", self.asm_state.active_alloc_scope.get());
+
+        let res = self.execute_int_configure_mpu(f);
+
+        // Restore the previous alloc scope:
+        self.asm_state
+            .active_alloc_scope
+            .set(prev_active_alloc_scope);
+
+        res
     }
 
     // We provide only the required implementations and rely on default
@@ -1260,7 +1688,6 @@ impl<ID: EFID, M: MPU + 'static> Rv32iCBaseRt for TockRv32iCRt<ID, M> {
 
 extern "C" {
     fn ef_tock_rv32i_c_rt_ret_springboard();
-    fn ef_tock_rv32i_c_rt_cb_springboard();
 }
 
 #[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))]
@@ -1271,11 +1698,5 @@ core::arch::global_asm!(
         // Return to machine-mode with an environment call or an instruction
         // access fault from a well-known address:
         ecall
-
-      .global ef_tock_rv32i_c_rt_cb_springboard
-      ef_tock_rv32i_c_rt_cb_springboard:
-        // Return to kernel with an illegal instruction trap or an instruction
-        // access fault from a well-known address:
-        unimp
     "
 );
