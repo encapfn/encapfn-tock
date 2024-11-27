@@ -125,7 +125,7 @@ checksum = "3dca9240753cf90908d7e4aac30f630662b02aebaa1b58a3cadabdb23385b58b"
 [[package]]
 name = "encapfn"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/encapfn?rev=bf4191a5df0512183116bf976cbac92c0c935c0f#bf4191a5df0512183116bf976cbac92c0c935c0f"
+source = "git+https://github.com/encapfn/encapfn?rev=7ec1e19bfa22cb98e45a1d132934d3630e48856a#7ec1e19bfa22cb98e45a1d132934d3630e48856a"
 
 [[package]]
 name = "encapfn-demo-qemu_rv32_virt"
