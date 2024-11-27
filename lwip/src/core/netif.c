@@ -1241,6 +1241,9 @@ netif_loop_output_ipv6(struct netif *netif, struct pbuf *p, const ip6_addr_t *ad
 #endif /* LWIP_IPV6 */
 #endif /* LWIP_HAVE_LOOPIF */
 
+void make_ipv4(ip4_addr_t* addr, uint32_t a, uint32_t b, uint32_t c, uint32_t d) {
+  IP4_ADDR(addr, d, c, b, a);
+}
 
 /**
  * Call netif_poll() in the main loop of your application. This is to prevent

@@ -99,8 +99,8 @@ pub unsafe fn main() {
 	        //netif.output = Some(lwip::etharp_output);
 	        netif.output = Some(netif_output);
                    netif.linkoutput = Some(netif_linkoutput);
-	        netif.hwaddr = [0x00, 0x0c, 0x29, 0x7d, 0xae, 0xc7];
-	        netif.hwaddr_len = 6;
+	        //netif.hwaddr = [0x00, 0x0c, 0x29, 0x7d, 0xae, 0xc7];
+	        //netif.hwaddr_len = 6;
                    netif.name = [b'e' as i8, b'0' as i8];
 	        netif.flags      = (lwip::NETIF_FLAG_BROADCAST | lwip::NETIF_FLAG_ETHARP | lwip::NETIF_FLAG_ETHERNET | lwip::NETIF_FLAG_IGMP | lwip::NETIF_FLAG_MLD6) as u8;
 	        netif.mtu = 1500;
@@ -133,17 +133,26 @@ pub unsafe fn main() {
                                             ipaddr.as_ptr().into(),
                                             state,
                                             Some(netif_init),
+                                            Some(lwip::netif_input),
                                             // TODO: Switch this to some safe wrapper.
-                                            unsafe { 
-                                                core::mem::transmute::<
-                                                    *const extern "C" fn(), 
-                                                    Option<unsafe extern "C" fn(*mut lwip::pbuf, *mut lwip::netif) -> i8>
-                                                >(callback_ptr as *const _)
-                                            }, 
-                                            alloc4,
-                                            &mut access,
+                                            // unsafe { 
+                                            //     core::mem::transmute::<
+                                            //         *const extern "C" fn(), 
+                                            //         Option<unsafe extern "C" fn(*mut lwip::pbuf, *mut lwip::netif) -> i8>
+                                            //     >(callback_ptr as *const _)
+                                            // }, 
+                                             alloc4,
+                                             &mut access,
                                         )
                                         .unwrap();
+                                    let output_fn: *mut lwip::netif_output_fn = efmutref_get_field!(lwip::netif, lwip::netif_output_fn, netif, output).as_ptr().into();
+                                    *output_fn = Some(lwip::etharp_output);
+
+                                    let output_link_fn: *mut lwip::netif_linkoutput_fn = efmutref_get_field!(lwip::netif, lwip::netif_linkoutput_fn, netif, linkoutput).as_ptr().into();
+                                    *output_link_fn =   core::mem::transmute::<
+                                                     *const extern "C" fn(), 
+                                                     Option<unsafe extern "C" fn(*mut lwip::netif, *mut lwip::pbuf) -> i8>
+                                                 >(callback_ptr as *const _);
 
                                     // Update ipaddr
                                     let ipaddr: *mut lwip::ip4_addr = efmutref_get_field!(lwip::netif, lwip::ip4_addr, netif, ip_addr).as_ptr().into();

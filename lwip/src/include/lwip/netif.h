@@ -447,6 +447,8 @@ void netif_remove(struct netif * netif);
    structure. */
 struct netif *netif_find(const char *name);
 
+void make_ipv4(ip4_addr_t* addr, uint32_t a, uint32_t b, uint32_t c, uint32_t d);
+
 void netif_set_default(struct netif *netif);
 
 #if LWIP_IPV4

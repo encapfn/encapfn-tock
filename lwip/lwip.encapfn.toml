@@ -29,3 +29,6 @@ fntab_id = 8
 
 [functions.sys_check_timeouts]
 fntab_id = 9
+
+[functions.make_ipv4]
+fntab_id = 10

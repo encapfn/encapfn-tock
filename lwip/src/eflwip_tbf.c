@@ -19,6 +19,7 @@ encapfn_fntab[2] = {
     /* 7 */ (fnptr) pbuf_take,
     /* 8 */ (fnptr) dhcp_start,
     /* 9 */ (fnptr) sys_check_timeouts,
+    /* 10*/ (fnptr) make_ipv4,
 };
 
 __attribute__ ((section (".encapfn_hdr")))
