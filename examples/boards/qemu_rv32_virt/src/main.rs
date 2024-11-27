@@ -12,6 +12,7 @@
 use core::ptr::addr_of_mut;
 use core::slice;
 
+use encapfn::efmutref_get_field;
 use encapfn::types::EFPtr;
 use kernel::debug;
 use kernel::{capabilities, create_capability};
@@ -21,11 +22,17 @@ use qemu_rv32_virt_lib::{self, PROCESSES};
 const FAULT_RESPONSE: capsules_system::process_policies::PanicFaultPolicy =
     capsules_system::process_policies::PanicFaultPolicy {};
 
-const ICMP_ECHO_ETH: [u8; 52] = [
+/* const ICMP_ECHO_ETH: [u8; 52] = [
 0x00, 0x0c, 0x29, 0x7d, 0xae, 0xc7, 0x00, 0x50, 0x56, 0xc0, 0x00, 0x08, 0x08, 0x00, 0x45, 0x00,
 0x00, 0x26, 0xba, 0x96, 0x00, 0x00, 0x40, 0x01, 0x3a, 0x6f, 0xc0, 0xa8, 0x02, 0x01, 0xc0, 0xa8,
 0x02, 0x80, 0x08, 0x00, 0xee, 0xdd, 0x12, 0x04, 0x00, 0x00, 0x56, 0xdd, 0x33, 0xe1, 0x00, 0x01,
-0x6b, 0x5c, 0x01, 0x02];
+0x6b, 0x5c, 0x01, 0x02]; */
+
+const ICMP_ECHO_ETH: [u8; 42] = 
+[0x2, 0x0, 0x0, 0x0, 0x0, 0x1, 0xa0, 0x2, 0xa5, 0x4c, 0x89, 0x2f, 0x8, 0x0, 0x45, 0x0, 0x0, 0x1c,
+ 0x0, 0x1, 0x0, 0x0, 0x40, 0x1, 0x3e, 0x69, 0xa, 0x33, 0x70, 0x6a, 0xc0, 0xa8, 0x1, 0x32, 0x8,
+  0x0, 0xf7, 0xff, 0x0, 0x0, 0x0, 0x0];
+
 
 /// Main function.
 ///
@@ -103,7 +110,7 @@ pub unsafe fn main() {
         lw.rt()
             .allocate_stacked_t_mut::<lwip::netif, _, _>(&mut alloc, |netif, mut alloc2| {
                 lw.rt().setup_callback(
-                    &mut |ctx, _alloc, _access| {
+                    &mut |ctx, _alloc, _access, _arg| {
                         panic!("Callback called!");
                     },
                     alloc2,
@@ -112,6 +119,9 @@ pub unsafe fn main() {
                             .allocate_stacked_t_mut::<lwip::ip4_addr, _, _>(
                                 alloc3,
                                 |ipaddr, alloc4| {
+                                    
+                                    // the netif_add memcopies passed values internally. we
+                                    // just need to pass a pointer (can update later).
                                     ipaddr.write(lwip::ip4_addr { addr: 0 }, &mut access);
 
                                     let state: *mut core::ffi::c_void = 0 as *mut _;
@@ -134,11 +144,29 @@ pub unsafe fn main() {
                                             &mut access,
                                         )
                                         .unwrap();
+
+                                    // Update ipaddr
+                                    let ipaddr: *mut lwip::ip4_addr = efmutref_get_field!(lwip::netif, lwip::ip4_addr, netif, ip_addr).as_ptr().into();
+                                    lwip::make_ipv4(ipaddr, 192, 168, 1, 50);
+
+                                    // Update netmask
+                                    let netmask: *mut lwip::ip4_addr = efmutref_get_field!(lwip::netif, lwip::ip4_addr, netif, netmask).as_ptr().into();
+                                    lwip::make_ipv4(netmask, 255, 255, 255, 0);
+
+                                    // Update gw
+                                    let gw: *mut lwip::ip4_addr = efmutref_get_field!(lwip::netif, lwip::ip4_addr, netif, gw).as_ptr().into();
+                                    lwip::make_ipv4(gw, 192, 168, 1, 1);
+                                    
                                     debug!("{:?}", result.validate());
                                 },
                             )
                             .unwrap();
 
+                        // Confirm that set ipv4 address correctly and fields not overwritten.
+                        let ipaddr = efmutref_get_field!(lwip::netif, lwip::ip4_addr, netif, ip_addr);
+                        let field_val: *const u32 = efmutref_get_field!(lwip::ip4_addr, u32, ipaddr, addr).as_ptr().into();
+                        assert!(*field_val == 3232235826);
+                        
                         let set_default_result = lw
                             .netif_set_default(netif.as_ptr().into(), alloc3, &mut access)
                             .unwrap();
@@ -147,10 +175,10 @@ pub unsafe fn main() {
                         let set_up_result = lw.netif_set_up(netif.as_ptr().into(), alloc3, &mut access).unwrap();
                         debug!("netif_set_up {:?}", set_up_result.validate());
                                 
-                		debug!("DHCP {:?}", lw.dhcp_start(netif.as_ptr().into(), alloc3, &mut access).unwrap().validate());
-                		let pbuf = lw.pbuf_alloc(lwip::pbuf_layer_PBUF_RAW, 52, lwip::pbuf_type_PBUF_POOL, alloc3, &mut access).unwrap().validate().unwrap();
+                		// debug!("DHCP {:?}", lw.dhcp_start(netif.as_ptr().into(), alloc3, &mut access).unwrap().validate());
+                		let pbuf = lw.pbuf_alloc(lwip::pbuf_layer_PBUF_RAW, 42, lwip::pbuf_type_PBUF_POOL, alloc3, &mut access).unwrap().validate().unwrap();
 
-                        lw.rt().allocate_stacked_t_mut::<[u8; 52], _, _>(
+                        lw.rt().allocate_stacked_t_mut::<[u8; 42], _, _>(
                             alloc3,
                             |buf, alloc4| {
                 			    buf.write(ICMP_ECHO_ETH, &mut access);

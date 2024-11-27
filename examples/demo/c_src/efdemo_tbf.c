@@ -5,9 +5,9 @@ typedef void (*fnptr)(void);
 
 fnptr const
 __attribute__ ((section (".encapfn_hdr")))
-encapfn_fntab[1] = {
+encapfn_fntab[2] = {
     /* 0 */ (fnptr) demo_nop,
-    /* 0 */ (fnptr) demo_invoke_callback,
+    /* 1 */ (fnptr) demo_invoke_callback,
 };
 
 __attribute__ ((section (".encapfn_hdr")))
