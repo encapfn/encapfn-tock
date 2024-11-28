@@ -11,7 +11,7 @@ use encapfn::abi::calling_convention::{AREG0, AREG1, AREG2, AREG3, AREG4, AREG5,
 use encapfn::abi::rv32i_c::Rv32iCABI;
 use encapfn::branding::EFID;
 use encapfn::rt::rv32i_c::{Rv32iCBaseRt, Rv32iCInvokeRes, Rv32iCRt};
-use encapfn::rt::EncapfnRt;
+use encapfn::rt::{CallbackContext, CallbackReturn, EncapfnRt};
 use encapfn::types::{AccessScope, AllocScope, AllocTracker, EFCopy};
 use encapfn::{EFError, EFResult};
 
@@ -48,13 +48,30 @@ pub struct TockRv32iCRtCallbackAsmContext {
 }
 
 #[derive(Debug, Clone)]
-pub struct CallbackContext {
+pub struct TockRv32iCRtCallbackContext {
     pub arg_regs: [usize; 8],
 }
 
+impl CallbackContext for TockRv32iCRtCallbackContext {
+    fn get_argument_register(&self, reg: usize) -> Option<usize> {
+        self.arg_regs.get(reg).copied()
+    }
+}
+
 #[derive(Debug, Clone)]
-pub struct CallbackReturn {
+pub struct TockRv32iCRtCallbackReturn {
     pub ret_regs: [usize; 2],
+}
+
+impl CallbackReturn for TockRv32iCRtCallbackReturn {
+    fn set_return_register(&mut self, reg: usize, value: usize) -> bool {
+        if let Some(r) = self.ret_regs.get_mut(reg) {
+            *r = value;
+            true
+        } else {
+            false
+        }
+    }
 }
 
 const CALLBACK_CONTEXT_PLUS_POINTER_SIZE: usize =
@@ -96,8 +113,13 @@ impl TockRv32iCRtAllocations {
 pub struct TockRv32iCCallbackDescriptor<'a> {
     // filled in with an illegal instruction opcode (0x00000000)
     springboard: u32,
-    wrapper:
-        unsafe extern "C" fn(*mut c_void, &CallbackContext, &mut CallbackReturn, *mut (), *mut ()),
+    wrapper: unsafe extern "C" fn(
+        *mut c_void,
+        &TockRv32iCRtCallbackContext,
+        &mut TockRv32iCRtCallbackReturn,
+        *mut (),
+        *mut (),
+    ),
     context: *mut c_void,
     _lt: PhantomData<&'a mut c_void>,
 }
@@ -105,8 +127,8 @@ pub struct TockRv32iCCallbackDescriptor<'a> {
 impl TockRv32iCCallbackDescriptor<'_> {
     unsafe fn invoke(
         &self,
-        callback_ctx: &CallbackContext,
-        callback_ret: &mut CallbackReturn,
+        callback_ctx: &TockRv32iCRtCallbackContext,
+        callback_ret: &mut TockRv32iCRtCallbackReturn,
         alloc_scope: *mut (),
         access_scope: *mut (),
     ) {
@@ -640,12 +662,12 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
         };
 
         // Construct a CallbackContext from the arguments to this function:
-        let callback_ctx = CallbackContext {
+        let callback_ctx = TockRv32iCRtCallbackContext {
             arg_regs: [a0, a1, a2, a3, a4, a5, a6, a7],
         };
 
         // Construct a default CallbackReturn:
-        let mut callback_ret = CallbackReturn { ret_regs: [0; 2] };
+        let mut callback_ret = TockRv32iCRtCallbackReturn { ret_regs: [0; 2] };
 
         // Execute the interrupt handler function.
         //
@@ -1355,11 +1377,16 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
 
         unsafe extern "C" fn callback_wrapper<
             'a,
-            ClosureTy: FnMut(&CallbackContext, &mut CallbackReturn, *mut (), *mut ()) + 'a,
+            ClosureTy: FnMut(
+                    &TockRv32iCRtCallbackContext,
+                    &mut TockRv32iCRtCallbackReturn,
+                    *mut (),
+                    *mut (),
+                ) + 'a,
         >(
             ctx_ptr: *mut c_void,
-            callback_ctx: &CallbackContext,
-            callback_ret: &mut CallbackReturn,
+            callback_ctx: &TockRv32iCRtCallbackContext,
+            callback_ret: &mut TockRv32iCRtCallbackReturn,
             alloc_scope: *mut (),
             access_scope: *mut (),
         ) {
@@ -1420,8 +1447,8 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
     type AllocTracker<'a> = TockRv32iCRtAllocChain<'a>;
     type ABI = Rv32iCABI;
     type CallbackTrampolineFn = CallbackTrampolineFn;
-    type CallbackContext = CallbackContext;
-    type CallbackReturn = CallbackReturn;
+    type CallbackContext = TockRv32iCRtCallbackContext;
+    type CallbackReturn = TockRv32iCRtCallbackReturn;
 
     // We don't have any symbol table state, as the Tock EF binary
     // already contains a symbol table that we can use.
@@ -1475,8 +1502,8 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
         ) -> R,
     {
         let typecast_callback =
-            &mut |callback_ctx: &CallbackContext,
-                  callback_ret: &mut CallbackReturn,
+            &mut |callback_ctx: &TockRv32iCRtCallbackContext,
+                  callback_ret: &mut TockRv32iCRtCallbackReturn,
                   alloc_scope_ptr: *mut (),
                   access_scope_ptr: *mut ()| {
                 let alloc_scope = unsafe {
