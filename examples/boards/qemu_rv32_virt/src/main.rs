@@ -17,6 +17,7 @@ use encapfn::types::EFPtr;
 use kernel::debug;
 use kernel::{capabilities, create_capability};
 use qemu_rv32_virt_lib::{self, PROCESSES};
+use encapfn::rt::CallbackContext;
 
 // How should the kernel respond when a process faults.
 const FAULT_RESPONSE: capsules_system::process_policies::PanicFaultPolicy =
@@ -96,11 +97,8 @@ pub unsafe fn main() {
         extern "C" fn netif_init(netif: *mut lwip::netif) -> i8 {
             debug!("Initializing {:?}", netif);
             let netif = unsafe { &mut *netif };
-	        //netif.output = Some(lwip::etharp_output);
-	        netif.output = Some(netif_output);
-                   netif.linkoutput = Some(netif_linkoutput);
-	        //netif.hwaddr = [0x00, 0x0c, 0x29, 0x7d, 0xae, 0xc7];
-	        //netif.hwaddr_len = 6;
+	        netif.hwaddr = [0x02, 0x00, 0x00, 0x00, 0x00, 0x01];
+	        netif.hwaddr_len = 6;
                    netif.name = [b'e' as i8, b'0' as i8];
 	        netif.flags      = (lwip::NETIF_FLAG_BROADCAST | lwip::NETIF_FLAG_ETHARP | lwip::NETIF_FLAG_ETHERNET | lwip::NETIF_FLAG_IGMP | lwip::NETIF_FLAG_MLD6) as u8;
 	        netif.mtu = 1500;
@@ -111,7 +109,9 @@ pub unsafe fn main() {
             .allocate_stacked_t_mut::<lwip::netif, _, _>(&mut alloc, |netif, mut alloc2| {
                 lw.rt().setup_callback(
                     &mut |ctx, _alloc, _access, _arg| {
-                        panic!("Callback called!");
+                        panic!("hello");
+                        //let pbuf_reg = ctx.get_argument_register(1).unwrap() as *mut lwip::pbuf;
+                        //panic!("{:?}", (*pbuf_reg).len)
                     },
                     alloc2,
                     |callback_ptr, alloc3| {
