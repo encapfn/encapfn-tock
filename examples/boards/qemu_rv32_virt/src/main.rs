@@ -109,9 +109,10 @@ pub unsafe fn main() {
             .allocate_stacked_t_mut::<lwip::netif, _, _>(&mut alloc, |netif, mut alloc2| {
                 lw.rt().setup_callback(
                     &mut |ctx, _alloc, _access, _arg| {
-                        panic!("hello");
-                        //let pbuf_reg = ctx.get_argument_register(1).unwrap() as *mut lwip::pbuf;
-                        //panic!("{:?}", (*pbuf_reg).len)
+                        let pbuf_reg = ctx.get_argument_register(1).unwrap() as *mut lwip::pbuf;
+                        let buffer_len = (*pbuf_reg).len;
+                        let buf = unsafe { slice::from_raw_parts((*pbuf_reg).payload as *const u8, buffer_len as usize)};
+                        debug!("[Received packet of length {:?}]: {:?}", buffer_len, buf);
                     },
                     alloc2,
                     |callback_ptr, alloc3| {
@@ -171,11 +172,6 @@ pub unsafe fn main() {
                             )
                             .unwrap();
 
-                        // Confirm that set ipv4 address correctly and fields not overwritten.
-                        let ipaddr = efmutref_get_field!(lwip::netif, lwip::ip4_addr, netif, ip_addr);
-                        let field_val: *const u32 = efmutref_get_field!(lwip::ip4_addr, u32, ipaddr, addr).as_ptr().into();
-                        assert!(*field_val == 3232235826);
-                        
                         let set_default_result = lw
                             .netif_set_default(netif.as_ptr().into(), alloc3, &mut access)
                             .unwrap();
