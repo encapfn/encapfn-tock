@@ -59,22 +59,23 @@ pub unsafe fn main() {
             )
         };
 
-        // Create a "bound" runtime, which implements the LibDemo API:
-        let bound_rt = encapfn_example_demo::libdemo::LibDemoRt::new(&rt).unwrap();
+        // Create a "bound" runtime
+        let bound_rt = encapfn_tock_littlefs::ef_littlefs_bindings::LibLittleFSRt::new(&rt).unwrap();
+        debug!("About to test_libdemo with the MockRT!");
 
         // Run a test:
-        encapfn_example_demo::test_libdemo(&bound_rt, &mut alloc, &mut access);
+        encapfn_tock_littlefs::test_littlefs(&bound_rt, &mut alloc, &mut access);
         debug!("Ran test_libdemo with the MockRt!");
+        debug!("");
 
         // Test callbacks!
-        encapfn_example_demo::test_libdemo_callback(&bound_rt, &mut alloc, &mut access);
-        debug!("Ran test_libdemo_callback with the MockRt!");
+        // encapfn_example_demo::test_libdemo_callback(&bound_rt, &mut alloc, &mut access);
     });
 
     encapfn::branding::new(|brand| {
         // Try to load the efdemo Encapsulated Functions TBF binary:
         let efdemo_binary = encapfn_tock::binary::EncapfnBinary::find(
-            "efdemo",
+            "ef_littlefs",
             core::slice::from_raw_parts(
                 &_sapps as *const u8,
                 &_eapps as *const u8 as usize - &_sapps as *const u8 as usize,
@@ -96,16 +97,15 @@ pub unsafe fn main() {
         }
         .unwrap();
 
-        // Create a "bound" runtime, which implements the LibDemo API:
-        let bound_rt = encapfn_example_demo::libdemo::LibDemoRt::new(&rt).unwrap();
+        // Create a "bound" runtime
+        let bound_rt = encapfn_tock_littlefs::ef_littlefs_bindings::LibLittleFSRt::new(&rt).unwrap();
+
+        debug!("About to test_libdemo with the Rv32iCRt!");
 
         // Run a test:
-        encapfn_example_demo::test_libdemo(&bound_rt, &mut alloc, &mut access);
+        encapfn_tock_littlefs::test_littlefs(&bound_rt, &mut alloc, &mut access);
         debug!("Ran test_libdemo with the Rv32iCRt!");
-
-        // Test callbacks!
-        encapfn_example_demo::test_libdemo_callback(&bound_rt, &mut alloc, &mut access);
-        debug!("Ran test_libdemo_callback with the Rv32iCRt!");
+        debug!("");
     });
 
     // Acquire required capabilities

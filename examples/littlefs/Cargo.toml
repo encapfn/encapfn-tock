@@ -1,0 +1,13 @@
+[package]
+name = "encapfn-tock-littlefs"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[build-dependencies]
+bindgen.workspace = true
+cc = "1.0.90"
+
+[dependencies]
+kernel.workspace = true
+encapfn.workspace = true

@@ -175,25 +175,6 @@ version = "0.1.0"
 source = "git+https://github.com/encapfn/encapfn?rev=af3822efffe1bc443e5ff6f9e305f72b241fea1f#af3822efffe1bc443e5ff6f9e305f72b241fea1f"
 
 [[package]]
-name = "encapfn-demo-qemu_rv32_virt"
-version = "0.1.0"
-dependencies = [
- "capsules-core",
- "capsules-extra",
- "capsules-system",
- "components",
- "encapfn",
- "encapfn-example-demo",
- "encapfn-tock",
- "kernel",
- "qemu_rv32_virt",
- "qemu_rv32_virt_chip",
- "rv32i",
- "sifive",
- "tock_build_scripts",
-]
-
-[[package]]
 name = "encapfn-earlgrey-cw310"
 version = "0.1.0"
 dependencies = [
@@ -202,6 +183,19 @@ dependencies = [
  "encapfn",
  "encapfn-example-otcrypto",
  "encapfn-tock",
+ "kernel",
+ "tock_build_scripts",
+]
+
+[[package]]
+name = "encapfn-earlgrey-cw310-littlefs"
+version = "0.1.0"
+dependencies = [
+ "earlgrey",
+ "earlgrey_board_lib",
+ "encapfn",
+ "encapfn-tock",
+ "encapfn-tock-littlefs",
  "kernel",
  "tock_build_scripts",
 ]
@@ -247,6 +241,35 @@ dependencies = [
  "kernel",
  "rv32i",
  "tock-tbf",
+]
+
+[[package]]
+name = "encapfn-tock-littlefs"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "cc",
+ "encapfn",
+ "kernel",
+]
+
+[[package]]
+name = "encapfn-tock-littlefs-qemu_rv32_virt"
+version = "0.1.0"
+dependencies = [
+ "capsules-core",
+ "capsules-extra",
+ "capsules-system",
+ "components",
+ "encapfn",
+ "encapfn-tock",
+ "encapfn-tock-littlefs",
+ "kernel",
+ "qemu_rv32_virt",
+ "qemu_rv32_virt_chip",
+ "rv32i",
+ "sifive",
+ "tock_build_scripts",
 ]
 
 [[package]]

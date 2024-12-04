@@ -3,7 +3,7 @@
 # Copyright Tock Contributors 2022.
 
 [package]
-name = "encapfn-demo-qemu_rv32_virt"
+name = "encapfn-tock-littlefs-qemu_rv32_virt"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -24,7 +24,7 @@ qemu_rv32_virt.workspace = true
 
 encapfn.workspace = true
 encapfn-tock = { path = "../../../encapfn-tock" }
-encapfn-example-demo = { path = "../../demo" }
+encapfn-tock-littlefs = { path = "../../littlefs" }
 
 [build-dependencies]
 tock_build_scripts.workspace = true

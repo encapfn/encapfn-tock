@@ -40,7 +40,9 @@ $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf: \
     $(EF_TOCK_BASEDIR)/encapfn_c_rt/encapfn_layout.ld \
     $(EF_LINK_OBJ)
 	mkdir -p $(BUILDDIR)
-	$(LD) --no-relax -o $@ $(COBJ) $(ASOBJ) $(BUILDDIR)/sys.o $(EF_LINK_OBJ) $(EF_SYSTEM_LIBS) -T$(EF_LAYOUT_LD) $(LDFLAGS)
+	EF_TOCK_BASEDIR=$(EF_TOCK_BASEDIR) envsubst '$EF_TOCK_BASEDIR' \
+	  < $(EF_LAYOUT_LD) > $(BUILDDIR)/encapfn_layout.ld
+	$(LD) --no-relax -o $@ $(COBJ) $(ASOBJ) $(BUILDDIR)/sys.o $(EF_LINK_OBJ) $(EF_SYSTEM_LIBS) -T$(BUILDDIR)/encapfn_layout.ld $(LDFLAGS)
 
 $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).tab: $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf
 	mkdir -p $(BUILDDIR)
