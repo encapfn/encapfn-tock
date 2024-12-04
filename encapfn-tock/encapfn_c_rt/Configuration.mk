@@ -23,7 +23,7 @@ BUILDDIR ?= build
 
 # ---------- PRECOMPILED LIBTOCK-C LIBRARIES -----------------------------------
 
-TOCK_USERLAND_BASE_DIR = $(EF_TOCK_BASEDIR)/../libtock-c
+TOCK_USERLAND_BASE_DIR = $(EF_TOCK_BASEDIR)/../third-party/libtock-c
 include $(TOCK_USERLAND_BASE_DIR)/Precompiled.mk
 
 # ---------- TOOLCHAIN DISCOVERY -----------------------------------------------
