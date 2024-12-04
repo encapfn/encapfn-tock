@@ -42,13 +42,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf4b9d6a944f767f8e5e0db018570623c85f3d925ac718db4e06d0187adb21c1"
 
 [[package]]
+name = "capsules-aes-gcm"
+version = "0.1.0"
+source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+dependencies = [
+ "enum_primitive 0.1.0 (git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3)",
+ "ghash",
+ "kernel",
+ "tickv 2.0.0 (git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3)",
+]
+
+[[package]]
 name = "capsules-core"
 version = "0.1.0"
 source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da#1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da"
 dependencies = [
- "enum_primitive",
+ "enum_primitive 0.1.0 (git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da)",
  "kernel",
- "tickv",
+ "tickv 2.0.0 (git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da)",
 ]
 
 [[package]]
@@ -57,9 +68,9 @@ version = "0.1.0"
 source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da#1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da"
 dependencies = [
  "capsules-core",
- "enum_primitive",
+ "enum_primitive 0.1.0 (git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da)",
  "kernel",
- "tickv",
+ "tickv 2.0.0 (git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da)",
 ]
 
 [[package]]
@@ -68,7 +79,7 @@ version = "0.1.0"
 source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da#1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da"
 dependencies = [
  "kernel",
- "tock-tbf",
+ "tock-tbf 0.1.0 (git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da)",
 ]
 
 [[package]]
@@ -113,7 +124,43 @@ dependencies = [
  "capsules-system",
  "kernel",
  "segger",
- "tock-tbf",
+ "tock-tbf 0.1.0 (git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da)",
+]
+
+[[package]]
+name = "cpufeatures"
+version = "0.2.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ca741a962e1b0bff6d724a1a0958b686406e853bb14061f218562e1896f95e6"
+dependencies = [
+ "libc",
+]
+
+[[package]]
+name = "earlgrey"
+version = "0.1.0"
+source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+dependencies = [
+ "kernel",
+ "lowrisc",
+ "rv32i",
+]
+
+[[package]]
+name = "earlgrey_board_lib"
+version = "0.1.0"
+source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+dependencies = [
+ "capsules-aes-gcm",
+ "capsules-core",
+ "capsules-extra",
+ "capsules-system",
+ "components",
+ "earlgrey",
+ "kernel",
+ "lowrisc",
+ "rv32i",
+ "tock-tbf 0.1.0 (git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3)",
 ]
 
 [[package]]
@@ -147,7 +194,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "encapfn-earlgrey-cw310"
+version = "0.1.0"
+dependencies = [
+ "earlgrey",
+ "earlgrey_board_lib",
+ "encapfn",
+ "encapfn-example-otcrypto",
+ "encapfn-tock",
+ "kernel",
+ "tock_build_scripts 0.1.0 (git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da)",
+]
+
+[[package]]
 name = "encapfn-example-demo"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "cc",
+ "encapfn",
+ "kernel",
+]
+
+[[package]]
+name = "encapfn-example-otcrypto"
 version = "0.1.0"
 dependencies = [
  "bindgen",
@@ -163,13 +233,18 @@ dependencies = [
  "encapfn",
  "kernel",
  "rv32i",
- "tock-tbf",
+ "tock-tbf 0.1.0 (git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da)",
 ]
 
 [[package]]
 name = "enum_primitive"
 version = "0.1.0"
 source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da#1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da"
+
+[[package]]
+name = "enum_primitive"
+version = "0.1.0"
+source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
 
 [[package]]
 name = "equivalent"
@@ -185,6 +260,26 @@ checksum = "534c5cf6194dfab3db3242765c03bbe257cf92f22b38f6bc0c58d59108a820ba"
 dependencies = [
  "libc",
  "windows-sys",
+]
+
+[[package]]
+name = "generic-array"
+version = "0.14.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
+dependencies = [
+ "typenum",
+ "version_check",
+]
+
+[[package]]
+name = "ghash"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1583cc1656d7839fd3732b80cf4f38850336cdb9b8ded1cd399ca62958de3c99"
+dependencies = [
+ "opaque-debug",
+ "polyval",
 ]
 
 [[package]]
@@ -234,7 +329,7 @@ source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f22
 dependencies = [
  "tock-cells",
  "tock-registers",
- "tock-tbf",
+ "tock-tbf 0.1.0 (git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da)",
 ]
 
 [[package]]
@@ -278,6 +373,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 
 [[package]]
+name = "lowrisc"
+version = "0.1.0"
+source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+dependencies = [
+ "kernel",
+ "rv32i",
+]
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -306,6 +410,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 
 [[package]]
+name = "opaque-debug"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
+
+[[package]]
+name = "polyval"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8419d2b623c7c0896ff2d5d96e2cb4ede590fed28fcc34934f4c33c036e620a1"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+ "opaque-debug",
+ "universal-hash",
+]
+
+[[package]]
 name = "prettyplease"
 version = "0.2.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -327,7 +449,7 @@ dependencies = [
 [[package]]
 name = "qemu_rv32_virt"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=e9c9e90646e7638131f63d2750bc48bd887b92a3#e9c9e90646e7638131f63d2750bc48bd887b92a3"
+source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
 dependencies = [
  "capsules-core",
  "capsules-extra",
@@ -337,7 +459,7 @@ dependencies = [
  "qemu_rv32_virt_chip",
  "rv32i",
  "sifive",
- "tock_build_scripts 0.1.0 (git+https://github.com/encapfn/tock?rev=e9c9e90646e7638131f63d2750bc48bd887b92a3)",
+ "tock_build_scripts 0.1.0 (git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3)",
 ]
 
 [[package]]
@@ -490,6 +612,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "subtle"
+version = "2.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6bdef32e8150c2a081110b42772ffe7d7c9032b606bc226c8260fd97e0976601"
+
+[[package]]
 name = "syn"
 version = "2.0.67"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -504,6 +632,11 @@ dependencies = [
 name = "tickv"
 version = "2.0.0"
 source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da#1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da"
+
+[[package]]
+name = "tickv"
+version = "2.0.0"
+source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
 
 [[package]]
 name = "tock-cells"
@@ -521,6 +654,11 @@ version = "0.1.0"
 source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da#1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da"
 
 [[package]]
+name = "tock-tbf"
+version = "0.1.0"
+source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+
+[[package]]
 name = "tock_build_scripts"
 version = "0.1.0"
 source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da#1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da"
@@ -528,7 +666,7 @@ source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f22
 [[package]]
 name = "tock_build_scripts"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=e9c9e90646e7638131f63d2750bc48bd887b92a3#e9c9e90646e7638131f63d2750bc48bd887b92a3"
+source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
 
 [[package]]
 name = "toml"
@@ -565,10 +703,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "typenum"
+version = "1.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
+
+[[package]]
+name = "universal-hash"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f214e8f697e925001e66ec2c6e37a4ef93f0f78c2eed7814394e10c62025b05"
+dependencies = [
+ "generic-array",
+ "subtle",
+]
+
+[[package]]
+name = "version_check"
+version = "0.9.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "virtio"

@@ -1,8 +1,10 @@
 [workspace]
 members = [
     "encapfn-tock",
-    "examples/demo",
+    "examples/boards/earlgrey-cw310",
     "examples/boards/qemu_rv32_virt",
+    "examples/demo",
+    "examples/otcrypto",
 ]
 resolver = "2"
 
@@ -26,7 +28,9 @@ sifive = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a
 tock-tbf = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 tock_build_scripts = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 
-qemu_rv32_virt = { git = "https://github.com/encapfn/tock", rev = "e9c9e90646e7638131f63d2750bc48bd887b92a3" }
+qemu_rv32_virt = { git = "https://github.com/encapfn/tock", rev = "ac1bbd4c895b104d40e40d48682ff9a98d9914c3" }
+earlgrey_board_lib = { git = "https://github.com/encapfn/tock", rev = "ac1bbd4c895b104d40e40d48682ff9a98d9914c3" }
+earlgrey = { git = "https://github.com/encapfn/tock", rev = "ac1bbd4c895b104d40e40d48682ff9a98d9914c3" }
 
 [patch."https://github.com/encapfn/tock"]
 capsules-core = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
