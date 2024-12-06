@@ -70,21 +70,31 @@ TOOLCHAIN_cortexm = arm-none-eabi-
 ifeq ($(EF_ARCH),rv32i)
   EF_ARCH_FAMILY := rv32i
   EF_RV32I_MARCH := rv32i
-  # TODO: how to determine GCC version?
-  NEWLIB_INC := riscv/riscv64-unknown-elf/include
-  NEWLIB_TARGET := riscv/riscv64-unknown-elf/lib/rv32i/ilp32
+  NEWLIB_INC     := riscv/riscv64-unknown-elf/include
+  NEWLIB_TARGET  := riscv/riscv64-unknown-elf/lib/rv32i/ilp32
+  LIBCPP_INC     := riscv/riscv64-unknown-elf/include
+  LIBCPP_TARGET  := riscv/riscv64-unknown-elf/lib/rv32i/ilp32
+  LIBGCC_TARGET_PREFIX := riscv64-unknown-elf
+  LIBGCC_TARGET_SUFFIX := rv32i/ilp32
 else ifeq ($(EF_ARCH),rv32imc)
   EF_ARCH_FAMILY := rv32i
   EF_RV32I_MARCH := rv32imc
-  NEWLIB_INC := riscv/riscv64-unknown-elf/include
+  NEWLIB_INC     := riscv/riscv64-unknown-elf/include
   # TODO: we don't have an imc version of this library?
-  NEWLIB_TARGET := riscv/riscv64-unknown-elf/lib/rv32im/ilp32
+  NEWLIB_TARGET  := riscv/riscv64-unknown-elf/lib/rv32im/ilp32
+  LIBCPP_INC     := riscv/riscv64-unknown-elf/include
+  LIBCPP_TARGET  := riscv/riscv64-unknown-elf/lib/rv32im/ilp32
+  LIBGCC_TARGET_PREFIX := riscv64-unknown-elf
+  LIBGCC_TARGET_SUFFIX := rv32im/ilp32
 else ifeq ($(EF_ARCH),rv32imac)
   EF_ARCH_FAMILY := rv32i
   EF_RV32I_MARCH := rv32imac
-  NEWLIB_INC := riscv/riscv64-unknown-elf/include
-  # TODO: how to determine GCC version?
-  NEWLIB_TARGET := riscv/riscv64-unknown-elf/lib/rv32imac/ilp32
+  NEWLIB_INC     := riscv/riscv64-unknown-elf/include
+  NEWLIB_TARGET  := riscv/riscv64-unknown-elf/lib/rv32imac/ilp32
+  LIBCPP_INC     := riscv/riscv64-unknown-elf/include
+  LIBCPP_TARGET  := riscv/riscv64-unknown-elf/lib/rv32imac/ilp32
+  LIBGCC_TARGET_PREFIX := riscv64-unknown-elf
+  LIBGCC_TARGET_SUFFIX := rv32imac/ilp32
 else ifeq ($(EF_ARCH),cortexm4)
   # Nothing to set.
 else
@@ -121,13 +131,46 @@ ifeq ($(EF_ARCH_FAMILY),rv32i)
   endif
   NEWLIB_BASE_DIR := $(TOCK_USERLAND_BASE_DIR)/lib/libtock-newlib-$(NEWLIB_VERSION_rv32)
 
+  # Match compiler version to supported libtock-libc++ versions.
+  #
+  # Keep in sync with the libtock-c submodule:
+  ifeq ($(CC_rv32_version_major),10)
+    LIBCPP_VERSION_rv32 := 10.5.0
+  else ifeq ($(CC_rv32_version_major),11)
+    LIBCPP_VERSION_rv32 := 10.5.0
+  else ifeq ($(CC_rv32_version_major),12)
+    LIBCPP_VERSION_rv32 := 12.3.0
+  else ifeq ($(CC_rv32_version_major),13)
+    LIBCPP_VERSION_rv32 := 13.2.0
+  else ifeq ($(CC_rv32_version_major),14)
+    LIBCPP_VERSION_rv32 := 14.1.0
+  else
+    LIBCPP_VERSION_rv32 := 14.1.0
+  endif
+  LIBCPP_BASE_DIR := $(TOCK_USERLAND_BASE_DIR)/lib/libtock-libc++-$(LIBCPP_VERSION_rv32)
+
   ARCH            := rv32imc
-  CFLAGS          := -march=$(EF_RV32I_MARCH) -mabi=ilp32 -mcmodel=medlow -std=c99 -nodefaultlibs -nostdlib -ffreestanding -isystem=$(NEWLIB_BASE_DIR)/$(NEWLIB_INC) $(EF_CFLAGS)
+
+  CFLAGS          := \
+    -march=$(EF_RV32I_MARCH) -mabi=ilp32 -mcmodel=medlow \
+    -std=c99 -nodefaultlibs -nostdlib -ffreestanding \
+    -isystem=$(NEWLIB_BASE_DIR)/$(NEWLIB_INC) \
+    -isystem $(LIBCPP_BASE_DIR)/$(LIBCPP_INC)/c++/$(LIBCPP_VERSION_rv32) \
+    -isystem $(LIBCPP_BASE_DIR)/$(LIBCPP_INC)/c++/$(LIBCPP_VERSION_rv32)/riscv64-unknown-elf \
+    -isystem $(LIBCPP_BASE_DIR)/riscv/riscv64-unknown-elf/sys-include \
+    $(EF_CFLAGS)
   ASFLAGS         := -march=$(EF_RV32I_MARCH) -mabi=ilp32
   CXXFLAGS        := -nostdinc++ $(CFLAGS)
   LDFLAGS         := -melf32lriscv
   INIT_RV32I_S    := $(EF_TOCK_BASEDIR)/encapfn_c_rt/init_riscv32.S
   INIT_S          := $(INIT_RV32I_S)
+
+  EF_SYSTEM_LIBS     := \
+    $(NEWLIB_BASE_DIR)/$(NEWLIB_TARGET)/libc.a \
+    $(NEWLIB_BASE_DIR)/$(NEWLIB_TARGET)/libm.a \
+    $(LIBCPP_BASE_DIR)/$(LIBCPP_TARGET)/libstdc++.a \
+    $(LIBCPP_BASE_DIR)/$(LIBCPP_TARGET)/libsupc++.a \
+    $(LIBCPP_BASE_DIR)/riscv/lib/gcc/$(LIBGCC_TARGET_PREFIX)/$(LIBCPP_VERSION_rv32)/$(LIBGCC_TARGET_SUFFIX)/libgcc.a
 else ifeq ($(EF_ARCH),cortexm4)
   CC              ?= $(TOOLCHAIN_cortexm)gcc
   CXX             ?= $(TOOLCHAIN_cortexm)g++

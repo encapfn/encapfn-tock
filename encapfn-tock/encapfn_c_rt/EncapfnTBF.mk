@@ -21,6 +21,9 @@ $(BUILDDIR):
 $(BUILDDIR)/%.c.o: $(SRCDIR)/%.c* | $(BUILDDIR)
 	$(CC) $(CFLAGS) -o $@ -g -O -c $<
 
+$(BUILDDIR)/sys.o: $(EF_TOCK_BASEDIR)/encapfn_c_rt/sys.c | $(BUILDDIR)
+	$(CC) $(CFLAGS) -o $@ -g -O -c $<
+
 $(BUILDDIR)/init_riscv32.S.o: $(INIT_RV32I_S) | $(BUILDDIR)
 	$(AS) $(ASFLAGS) -o $@ -g -c $<
 
@@ -28,14 +31,13 @@ $(BUILDDIR)/%.S.o: %.S* | $(BUILDDIR)
 	$(AS) $(ASFLAGS) -o $@ -g -c $<
 
 $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf: \
-    $(COBJ) $(ASOBJ) \
-    $(NEWLIB_BASE_DIR)/$(NEWLIB_TARGET)/libc.a \
-    $(NEWLIB_BASE_DIR)/$(NEWLIB_TARGET)/libm.a \
+    $(COBJ) $(ASOBJ) $(BUILDDIR)/sys.o \
+    $(EF_SYSTEM_LIBS) \
     $(EF_LAYOUT_LD) \
     $(EF_TOCK_BASEDIR)/encapfn_c_rt/encapfn_layout.ld \
     $(EF_LINK_OBJ) \
     | $(BUILDDIR)
-	$(LD) --no-relax -o $@ $(COBJ) $(ASOBJ) $(EF_LINK_OBJ) -T$(EF_LAYOUT_LD) $(LDFLAGS)
+	$(LD) --no-relax -o $@ $(COBJ) $(ASOBJ) $(BUILDDIR)/sys.o $(EF_LINK_OBJ) $(EF_SYSTEM_LIBS) -T$(EF_LAYOUT_LD) $(LDFLAGS)
 
 $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).tab: $(BUILDDIR)/$(EF_TARGET)_$(EF_BIN_NAME).elf | $(BUILDDIR)
 	elf2tab --verbose --disable -o $@ -n $(EF_BIN_NAME) $<,$(ARCH)
