@@ -1,0 +1,18 @@
+[package]
+name = "encapfn-tock-lwip"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[lib]
+crate-type = ["lib"]
+path = "rust/lib.rs"
+
+[dependencies]
+kernel.workspace = true
+encapfn.workspace = true
+
+
+[build-dependencies]
+bindgen.workspace = true
+cc = "1.0.90"

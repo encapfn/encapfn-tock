@@ -129,9 +129,9 @@ dependencies = [
 
 [[package]]
 name = "cpufeatures"
-version = "0.2.15"
+version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ca741a962e1b0bff6d724a1a0958b686406e853bb14061f218562e1896f95e6"
+checksum = "16b80225097f2e5ae4e7179dd2266824648f3e2f49d9134d584b76389d31c4c3"
 dependencies = [
  "libc",
 ]
@@ -183,8 +183,8 @@ dependencies = [
  "capsules-system",
  "components",
  "encapfn",
- "encapfn-example-demo",
  "encapfn-tock",
+ "encapfn-tock-lwip",
  "kernel",
  "qemu_rv32_virt",
  "qemu_rv32_virt_chip",
@@ -202,6 +202,19 @@ dependencies = [
  "encapfn",
  "encapfn-example-otcrypto",
  "encapfn-tock",
+ "kernel",
+ "tock_build_scripts",
+]
+
+[[package]]
+name = "encapfn-earlgrey-cw310-lwip"
+version = "0.1.0"
+dependencies = [
+ "earlgrey",
+ "earlgrey_board_lib",
+ "encapfn",
+ "encapfn-tock",
+ "encapfn-tock-lwip",
  "kernel",
  "tock_build_scripts",
 ]
@@ -247,6 +260,16 @@ dependencies = [
  "kernel",
  "rv32i",
  "tock-tbf",
+]
+
+[[package]]
+name = "encapfn-tock-lwip"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "cc",
+ "encapfn",
+ "kernel",
 ]
 
 [[package]]

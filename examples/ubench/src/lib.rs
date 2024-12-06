@@ -24,6 +24,28 @@ mod constants {
 
 use libdemo::LibDemo;
 
+pub fn print_result<T: Time>(
+    label: &str,
+    elements: Option<usize>,
+    measurement: (usize, T::Ticks, T::Ticks),
+    time: &T,
+) {
+    let (iters, start, end) = measurement;
+    assert!(end > start);
+    let ticks = end.wrapping_sub(start);
+    let us = time.ticks_to_us(ticks);
+    kernel::debug!(
+        "[{}({:?})]: {:?} ticks ({} us) for {} iters, {} ticks / iter, {} us / iter",
+        label,
+        elements,
+        ticks,
+        us,
+        iters,
+        (ticks.into_u32() as f32) / iters as f32,
+        (us as f32) / iters as f32
+    );
+}
+
 #[inline(always)]
 pub fn bench_args_ef<
     const ARG_COUNT: usize,
@@ -88,28 +110,6 @@ pub fn bench_invoke_unsafe<T: Time>(time: &T, iters: usize) -> (usize, T::Ticks,
     let end = time.now();
 
     (iters, start, end)
-}
-
-pub fn print_result<T: Time>(
-    label: &str,
-    elements: Option<usize>,
-    measurement: (usize, T::Ticks, T::Ticks),
-    time: &T,
-) {
-    let (iters, start, end) = measurement;
-    assert!(end > start);
-    let ticks = end.wrapping_sub(start);
-    let us = time.ticks_to_us(ticks);
-    kernel::debug!(
-        "[{}({:?})]: {:?} ticks ({} us) for {} iters, {} ticks / iter, {} us / iter",
-        label,
-        elements,
-        ticks,
-        us,
-        iters,
-        (ticks.into_u32() as f32) / iters as f32,
-        (us as f32) / iters as f32
-    );
 }
 
 #[inline(never)]

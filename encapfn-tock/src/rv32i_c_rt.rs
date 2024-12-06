@@ -479,6 +479,8 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
     fn init(&self) -> EFResult<()> {
         let mut res = TockRv32iCInvokeRes::new();
 
+	kernel::debug!("Initializing foreign runtime, ptr: {:?}, init addr: {:p}", self.rthdr_addr, self.init_addr);
+
         self.execute_int_configure_mpu(|| unsafe {
             Self::foreign_runtime_init(
                 self.rthdr_addr as usize,

@@ -1,0 +1,591 @@
+graph: { title: "lfs.c"
+node: { title: "lfs.c:lfs_pair_isnull" label: "lfs_pair_isnull\nlfs.c:292:20\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_pair_cmp" label: "lfs_pair_cmp\nlfs.c:296:19\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_pair_issync" label: "lfs_pair_issync\nlfs.c:303:20\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_tag_dsize" label: "lfs_tag_dsize\nlfs.c:371:26\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_gstate_xor" label: "lfs_gstate_xor\nlfs.c:391:20\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_gstate_iszero" label: "lfs_gstate_iszero\nlfs.c:397:20\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_gstate_hasmovehere" label: "lfs_gstate_hasmovehere\nlfs.c:424:20\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_gstate_hasmovehere" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:426:37" }
+node: { title: "lfs.c:lfs_mlist_isopen" label: "lfs_mlist_isopen\nlfs.c:495:13\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_alloc_lookahead" label: "lfs_alloc_lookahead\nlfs.c:614:12\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_dir_traverse_filter" label: "lfs_dir_traverse_filter\nlfs.c:840:12\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_dir_commit_size" label: "lfs_dir_commit_size\nlfs.c:1887:12\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_commit_size" targetname: "lfs.c:lfs_tag_dsize" label: "lfs.c:1891:14" }
+node: { title: "lfs.c:lfs_fs_size_count" label: "lfs_fs_size_count\nlfs.c:5111:12\n0 bytes (static)" }
+node: { title: "lfs.c:lfs_fs_preporphans" label: "lfs_fs_preporphans\nlfs.c:4833:12\n16 bytes (static)" }
+node: { title: "__assert_func" label: "__assert_func\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/assert.h:41:6" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_fs_preporphans" targetname: "__assert_func" label: "lfs.c:4834:5" }
+edge: { sourcename: "lfs.c:lfs_fs_preporphans" targetname: "__assert_func" label: "lfs.c:4835:5" }
+node: { title: "lfs.c:lfs_bd_read" label: "lfs_bd_read\nlfs.c:44:12\n64 bytes (static)" }
+node: { title: "memcpy" label: "__builtin_memcpy\n<built-in>" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_bd_read" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_bd_read" targetname: "memcpy" }
+node: { title: "__indirect_call" label: "Indirect Call Placeholder" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_bd_read" targetname: "__indirect_call" label: "lfs.c:95:23" }
+edge: { sourcename: "lfs.c:lfs_bd_read" targetname: "__assert_func" label: "lfs.c:107:9" }
+edge: { sourcename: "lfs.c:lfs_bd_read" targetname: "__indirect_call" label: "lfs.c:116:19" }
+edge: { sourcename: "lfs.c:lfs_bd_read" targetname: "__assert_func" label: "lfs.c:118:9" }
+node: { title: "lfs.c:lfs_dir_getslice" label: "lfs_dir_getslice\nlfs.c:706:19\n96 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_getslice" targetname: "lfs.c:lfs_gstate_hasmovehere" label: "lfs.c:714:9" }
+edge: { sourcename: "lfs.c:lfs_dir_getslice" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:727:19" }
+node: { title: "__bswapsi2" label: "__bswapsi2\n<built-in>" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_dir_getslice" targetname: "__bswapsi2" }
+edge: { sourcename: "lfs.c:lfs_dir_getslice" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:755:19" }
+node: { title: "memset" label: "__builtin_memset\n<built-in>" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_dir_getslice" targetname: "memset" }
+edge: { sourcename: "lfs.c:lfs_dir_getslice" targetname: "lfs.c:lfs_tag_dsize" label: "lfs.c:724:39" }
+node: { title: "lfs.c:lfs_dir_get" label: "lfs_dir_get\nlfs.c:771:19\n0 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_get" targetname: "lfs.c:lfs_dir_getslice" label: "lfs.c:773:12" }
+node: { title: "lfs.c:lfs_dir_getgstate" label: "lfs_dir_getgstate\nlfs.c:1382:12\n32 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_getgstate" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:1385:22" }
+edge: { sourcename: "lfs.c:lfs_dir_getgstate" targetname: "lfs.c:lfs_gstate_xor" label: "lfs.c:1394:9" }
+node: { title: "lfs.c:lfs_fs_parent_match" label: "lfs_fs_parent_match\nlfs.c:4769:12\n32 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_fs_parent_match" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:4777:15" }
+edge: { sourcename: "lfs.c:lfs_fs_parent_match" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:4785:13" }
+node: { title: "lfs.c:lfs_deinit" label: "lfs_deinit\nlfs.c:4312:12\n16 bytes (static)" }
+node: { title: "free" label: "free\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/stdlib.h:94:6" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_deinit" targetname: "free" label: "lfs_util.h:243:5" }
+edge: { sourcename: "lfs.c:lfs_deinit" targetname: "free" label: "lfs_util.h:243:5" }
+edge: { sourcename: "lfs.c:lfs_deinit" targetname: "free" label: "lfs_util.h:243:5" }
+node: { title: "lfs.c:lfs_dir_getinfo" label: "lfs_dir_getinfo\nlfs.c:1400:12\n48 bytes (static)" }
+node: { title: "strcpy" label: "strcpy\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/string.h:38:8" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_dir_getinfo" targetname: "strcpy" label: "lfs.c:1404:9" }
+edge: { sourcename: "lfs.c:lfs_dir_getinfo" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:1409:22" }
+edge: { sourcename: "lfs.c:lfs_dir_getinfo" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:1418:11" }
+node: { title: "lfs.c:lfs_bd_erase" label: "lfs_bd_erase\nlfs.c:275:12\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_bd_erase" targetname: "__assert_func" label: "lfs.c:276:5" }
+edge: { sourcename: "lfs.c:lfs_bd_erase" targetname: "__indirect_call" label: "lfs.c:277:15" }
+edge: { sourcename: "lfs.c:lfs_bd_erase" targetname: "__assert_func" label: "lfs.c:278:5" }
+node: { title: "lfs.c:lfs_dir_traverse.constprop.0" label: "lfs_dir_traverse.constprop\nlfs.c:900:12\n224 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_traverse.constprop.0" targetname: "lfs.c:lfs_tag_dsize" label: "lfs.c:918:21" }
+edge: { sourcename: "lfs.c:lfs_dir_traverse.constprop.0" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:920:27" }
+edge: { sourcename: "lfs.c:lfs_dir_traverse.constprop.0" targetname: "__bswapsi2" }
+edge: { sourcename: "lfs.c:lfs_dir_traverse.constprop.0" targetname: "__assert_func" label: "lfs.c:950:17" }
+edge: { sourcename: "lfs.c:lfs_dir_traverse.constprop.0" targetname: "memset" }
+edge: { sourcename: "lfs.c:lfs_dir_traverse.constprop.0" targetname: "__indirect_call" label: "lfs.c:1047:23" }
+edge: { sourcename: "lfs.c:lfs_dir_traverse.constprop.0" targetname: "__indirect_call" label: "lfs.c:1058:19" }
+node: { title: "lfs.c:lfs_dir_getread.constprop.0" label: "lfs_dir_getread.constprop\nlfs.c:778:12\n48 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_getread.constprop.0" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_dir_getread.constprop.0" targetname: "lfs.c:lfs_dir_getslice" label: "lfs.c:829:19" }
+node: { title: "lfs.c:lfs_bd_crc.constprop.0" label: "lfs_bd_crc.constprop\nlfs.c:154:12\n64 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_bd_crc.constprop.0" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:162:19" }
+node: { title: "lfs_crc" label: "lfs_crc\nlfs_util.h:220:10" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_bd_crc.constprop.0" targetname: "lfs_crc" label: "lfs.c:169:16" }
+node: { title: "lfs.c:lfs_dir_fetchmatch" label: "lfs_dir_fetchmatch\nlfs.c:1095:19\n144 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:1114:19" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:1114:19" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs_crc" label: "lfs.c:1149:24" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_tag_dsize" label: "lfs.c:1155:20" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:1156:23" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs_crc" label: "lfs.c:1167:19" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "__bswapsi2" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_tag_dsize" label: "lfs.c:1176:30" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:1185:23" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs_crc" label: "lfs.c:1207:29" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_tag_dsize" label: "lfs.c:1211:34" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_bd_crc.constprop.0" label: "lfs.c:1224:19" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:1254:23" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:1265:23" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "__indirect_call" label: "lfs.c:1281:27" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_bd_crc.constprop.0" label: "lfs.c:1333:27" }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "lfs.c:lfs_gstate_hasmovehere" label: "lfs.c:1346:13" }
+node: { title: "printf" label: "printf\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/stdio.h:206:5" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_dir_fetchmatch" targetname: "printf" label: "lfs.c:1369:5" }
+node: { title: "lfs.c:lfs_fs_parent" label: "lfs_fs_parent\nlfs.c:4790:19\n80 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_fs_parent" targetname: "lfs.c:lfs_pair_issync" label: "lfs.c:4800:13" }
+edge: { sourcename: "lfs.c:lfs_fs_parent" targetname: "printf" label: "lfs.c:4801:13" }
+edge: { sourcename: "lfs.c:lfs_fs_parent" targetname: "lfs.c:lfs_dir_fetchmatch" label: "lfs.c:4812:26" }
+edge: { sourcename: "lfs.c:lfs_fs_parent" targetname: "lfs.c:lfs_pair_isnull" label: "lfs.c:4798:13" }
+node: { title: "lfs.c:lfs_dir_fetch" label: "lfs_dir_fetch\nlfs.c:1374:12\n0 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_fetch" targetname: "lfs.c:lfs_dir_fetchmatch" label: "lfs.c:1378:17" }
+node: { title: "lfs.c:lfs_fs_pred" label: "lfs_fs_pred\nlfs.c:4725:12\n48 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_fs_pred" targetname: "lfs.c:lfs_pair_issync" label: "lfs.c:4735:13" }
+edge: { sourcename: "lfs.c:lfs_fs_pred" targetname: "printf" label: "lfs.c:4736:13" }
+edge: { sourcename: "lfs.c:lfs_fs_pred" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:4747:13" }
+edge: { sourcename: "lfs.c:lfs_fs_pred" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:4751:19" }
+edge: { sourcename: "lfs.c:lfs_fs_pred" targetname: "lfs.c:lfs_pair_isnull" label: "lfs.c:4733:13" }
+node: { title: "lfs.c:lfs_dir_find" label: "lfs_dir_find\nlfs.c:1464:19\n96 bytes (static)" }
+node: { title: "strspn" label: "strspn\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/string.h:47:9" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_dir_find" targetname: "strspn" label: "lfs.c:1480:17" }
+node: { title: "strcspn" label: "strcspn\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/string.h:39:9" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_dir_find" targetname: "strcspn" label: "lfs.c:1481:30" }
+node: { title: "memcmp" label: "memcmp\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/string.h:30:7" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_dir_find" targetname: "memcmp" label: "lfs.c:1485:30" }
+edge: { sourcename: "lfs.c:lfs_dir_find" targetname: "strspn" label: "lfs.c:1495:23" }
+edge: { sourcename: "lfs.c:lfs_dir_find" targetname: "strcspn" label: "lfs.c:1496:23" }
+edge: { sourcename: "lfs.c:lfs_dir_find" targetname: "memcmp" label: "lfs.c:1501:33" }
+edge: { sourcename: "lfs.c:lfs_dir_find" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:1529:30" }
+node: { title: "strchr" label: "strchr\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/string.h:35:8" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_dir_find" targetname: "strchr" label: "lfs.c:1543:22" }
+edge: { sourcename: "lfs.c:lfs_dir_find" targetname: "lfs.c:lfs_dir_fetchmatch" label: "lfs.c:1539:19" }
+node: { title: "lfs.c:lfs_bd_cmp.constprop.0" label: "lfs_bd_cmp.constprop\nlfs.c:127:12\n64 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_bd_cmp.constprop.0" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:138:19" }
+edge: { sourcename: "lfs.c:lfs_bd_cmp.constprop.0" targetname: "memcmp" label: "lfs.c:145:19" }
+node: { title: "lfs.c:lfs_dir_find_match" label: "lfs_dir_find_match\nlfs.c:1440:12\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_find_match" targetname: "lfs.c:lfs_bd_cmp.constprop.0" label: "lfs.c:1448:15" }
+node: { title: "lfs.c:lfs_ctz_index.isra.0" label: "lfs_ctz_index.isra\nlfs.c:2843:12\n32 bytes (static)" }
+node: { title: "__popcountsi2" label: "__popcountsi2\n<built-in>" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_ctz_index.isra.0" targetname: "__popcountsi2" }
+edge: { sourcename: "lfs.c:lfs_ctz_index.isra.0" targetname: "__popcountsi2" }
+node: { title: "lfs.c:lfs_ctz_find.constprop.0" label: "lfs_ctz_find.constprop\nlfs.c:2856:12\n80 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_ctz_find.constprop.0" targetname: "lfs.c:lfs_ctz_index.isra.0" label: "lfs.c:2866:25" }
+edge: { sourcename: "lfs.c:lfs_ctz_find.constprop.0" targetname: "lfs.c:lfs_ctz_index.isra.0" label: "lfs.c:2867:24" }
+node: { title: "__clzsi2" label: "__clzsi2\n<built-in>" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_ctz_find.constprop.0" targetname: "__clzsi2" }
+node: { title: "__ctzsi2" label: "__ctzsi2\n<built-in>" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_ctz_find.constprop.0" targetname: "__ctzsi2" }
+edge: { sourcename: "lfs.c:lfs_ctz_find.constprop.0" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:2874:19" }
+node: { title: "lfs.c:lfs_file_flushedread" label: "lfs_file_flushedread\nlfs.c:3456:20\n80 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_file_flushedread" targetname: "lfs.c:lfs_ctz_find.constprop.0" label: "lfs.c:3474:27" }
+edge: { sourcename: "lfs.c:lfs_file_flushedread" targetname: "lfs.c:lfs_dir_getread.constprop.0" label: "lfs.c:3491:23" }
+edge: { sourcename: "lfs.c:lfs_file_flushedread" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:3500:23" }
+node: { title: "lfs.c:lfs_ctz_traverse" label: "lfs_ctz_traverse\nlfs.c:2990:12\n64 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_ctz_traverse" targetname: "lfs.c:lfs_ctz_index.isra.0" label: "lfs.c:2998:23" }
+edge: { sourcename: "lfs.c:lfs_ctz_traverse" targetname: "__indirect_call" label: "lfs.c:3001:19" }
+edge: { sourcename: "lfs.c:lfs_ctz_traverse" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:3012:15" }
+edge: { sourcename: "lfs.c:lfs_ctz_traverse" targetname: "__indirect_call" label: "lfs.c:3022:19" }
+node: { title: "lfs.c:lfs_fs_traverse_" label: "lfs_fs_traverse_\nlfs.c:4617:5\n96 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "memset" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "lfs.c:lfs_pair_issync" label: "lfs.c:4641:13" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "printf" label: "lfs.c:4642:13" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "__indirect_call" label: "lfs.c:4654:23" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "__indirect_call" label: "lfs.c:4654:23" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:4661:19" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:4668:30" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "lfs.c:lfs_ctz_traverse" label: "lfs.c:4679:23" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "__indirect_call" label: "lfs.c:4687:27" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "__indirect_call" label: "lfs.c:4687:27" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "lfs.c:lfs_pair_isnull" label: "lfs.c:4639:13" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "lfs.c:lfs_ctz_traverse" label: "lfs.c:4704:23" }
+edge: { sourcename: "lfs.c:lfs_fs_traverse_" targetname: "lfs.c:lfs_ctz_traverse" label: "lfs.c:4712:23" }
+node: { title: "lfs.c:lfs_alloc_scan" label: "lfs_alloc_scan\nlfs.c:628:12\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_alloc_scan" targetname: "memset" }
+edge: { sourcename: "lfs.c:lfs_alloc_scan" targetname: "lfs.c:lfs_fs_traverse_" label: "lfs.c:642:15" }
+node: { title: "lfs.c:lfs_alloc" label: "lfs_alloc\nlfs.c:653:12\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_alloc" targetname: "printf" label: "lfs.c:689:13" }
+edge: { sourcename: "lfs.c:lfs_alloc" targetname: "lfs.c:lfs_alloc_scan" label: "lfs.c:697:19" }
+node: { title: "lfs.c:lfs_dir_alloc" label: "lfs_dir_alloc\nlfs.c:1787:12\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_alloc" targetname: "lfs.c:lfs_alloc" label: "lfs.c:1790:19" }
+edge: { sourcename: "lfs.c:lfs_dir_alloc" targetname: "lfs.c:lfs_alloc" label: "lfs.c:1790:19" }
+edge: { sourcename: "lfs.c:lfs_dir_alloc" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:1801:15" }
+node: { title: "lfs.c:lfs_fs_size_" label: "lfs_fs_size_\nlfs.c:5118:20\n32 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_fs_size_" targetname: "lfs.c:lfs_fs_traverse_" label: "lfs.c:5120:15" }
+node: { title: "lfs.c:lfs_cache_zero.isra.0" label: "lfs_cache_zero.isra\nlfs.c:38:20\n16 bytes (static)" }
+node: { title: "memset" label: "memset\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/string.h:33:9" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_cache_zero.isra.0" targetname: "memset" label: "lfs.c:40:5" }
+node: { title: "lfs.c:lfs_init" label: "lfs_init\nlfs.c:4156:12\n32 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4178:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4179:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4180:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4184:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4185:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4186:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4189:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4201:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4207:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4209:5" }
+node: { title: "malloc" label: "malloc\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/stdlib.h:108:7" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "malloc" label: "lfs_util.h:231:12" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "malloc" label: "lfs_util.h:231:12" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "lfs.c:lfs_cache_zero.isra.0" label: "lfs.c:4235:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "lfs.c:lfs_cache_zero.isra.0" label: "lfs.c:4236:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4240:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "malloc" label: "lfs_util.h:231:12" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4252:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4258:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4264:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4270:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4272:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4274:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "__assert_func" label: "lfs.c:4276:5" }
+edge: { sourcename: "lfs.c:lfs_init" targetname: "lfs.c:lfs_deinit" label: "lfs.c:4308:5" }
+node: { title: "lfs.c:lfs_bd_flush" label: "lfs_bd_flush\nlfs.c:176:12\n48 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_bd_flush" targetname: "__assert_func" label: "lfs.c:179:9" }
+edge: { sourcename: "lfs.c:lfs_bd_flush" targetname: "__indirect_call" label: "lfs.c:181:19" }
+edge: { sourcename: "lfs.c:lfs_bd_flush" targetname: "__assert_func" label: "lfs.c:183:9" }
+edge: { sourcename: "lfs.c:lfs_bd_flush" targetname: "lfs.c:lfs_cache_zero.isra.0" label: "lfs.c:203:9" }
+edge: { sourcename: "lfs.c:lfs_bd_flush" targetname: "lfs.c:lfs_bd_cmp.constprop.0" label: "lfs.c:191:23" }
+node: { title: "lfs.c:lfs_bd_prog" label: "lfs_bd_prog\nlfs.c:227:12\n48 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_bd_prog" targetname: "__assert_func" label: "lfs.c:232:5" }
+edge: { sourcename: "lfs.c:lfs_bd_prog" targetname: "__assert_func" label: "lfs.c:233:5" }
+edge: { sourcename: "lfs.c:lfs_bd_prog" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_bd_prog" targetname: "lfs.c:lfs_bd_flush" label: "lfs.c:251:27" }
+edge: { sourcename: "lfs.c:lfs_bd_prog" targetname: "__assert_func" label: "lfs.c:262:9" }
+node: { title: "lfs.c:lfs_file_relocate" label: "lfs_file_relocate\nlfs.c:3230:12\n64 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_file_relocate" targetname: "lfs.c:lfs_alloc" label: "lfs.c:3234:19" }
+edge: { sourcename: "lfs.c:lfs_file_relocate" targetname: "lfs.c:lfs_bd_erase" label: "lfs.c:3239:15" }
+edge: { sourcename: "lfs.c:lfs_file_relocate" targetname: "lfs.c:lfs_dir_getread.constprop.0" label: "lfs.c:3251:23" }
+edge: { sourcename: "lfs.c:lfs_file_relocate" targetname: "lfs.c:lfs_bd_prog" label: "lfs.c:3269:19" }
+edge: { sourcename: "lfs.c:lfs_file_relocate" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:3261:23" }
+edge: { sourcename: "lfs.c:lfs_file_relocate" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_file_relocate" targetname: "lfs.c:lfs_cache_zero.isra.0" label: "lfs.c:3285:9" }
+edge: { sourcename: "lfs.c:lfs_file_relocate" targetname: "printf" label: "lfs.c:3292:9" }
+node: { title: "lfs.c:lfs_file_flushedwrite" label: "lfs_file_flushedwrite\nlfs.c:3536:20\n96 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_file_relocate" label: "lfs.c:3304:15" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_ctz_find.constprop.0" label: "lfs.c:3558:31" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_cache_zero.isra.0" label: "lfs.c:3567:21" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_alloc" label: "lfs.c:2898:19" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_bd_erase" label: "lfs.c:2904:19" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_ctz_index.isra.0" label: "lfs.c:2919:31" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:2926:27" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_bd_prog" label: "lfs.c:2933:27" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "__ctzsi2" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_bd_prog" label: "lfs.c:2955:23" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:2966:27" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "printf" label: "lfs.c:2982:9" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_bd_prog" label: "lfs.c:3590:23" }
+edge: { sourcename: "lfs.c:lfs_file_flushedwrite" targetname: "lfs.c:lfs_file_relocate" label: "lfs.c:3602:19" }
+node: { title: "lfs.c:lfs_dir_commitprog" label: "lfs_dir_commitprog\nlfs.c:1576:12\n32 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_commitprog" targetname: "lfs.c:lfs_bd_prog" label: "lfs.c:1578:15" }
+edge: { sourcename: "lfs.c:lfs_dir_commitprog" targetname: "lfs_crc" label: "lfs.c:1586:19" }
+node: { title: "lfs.c:lfs_dir_commitattr" label: "lfs_dir_commitattr\nlfs.c:1593:12\n64 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_commitattr" targetname: "lfs.c:lfs_tag_dsize" label: "lfs.c:1596:24" }
+edge: { sourcename: "lfs.c:lfs_dir_commitattr" targetname: "__bswapsi2" }
+edge: { sourcename: "lfs.c:lfs_dir_commitattr" targetname: "lfs.c:lfs_dir_commitprog" label: "lfs.c:1603:15" }
+edge: { sourcename: "lfs.c:lfs_dir_commitattr" targetname: "lfs.c:lfs_dir_commitprog" label: "lfs.c:1610:15" }
+edge: { sourcename: "lfs.c:lfs_dir_commitattr" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:1620:19" }
+edge: { sourcename: "lfs.c:lfs_dir_commitattr" targetname: "lfs.c:lfs_dir_commitprog" label: "lfs.c:1627:19" }
+node: { title: "lfs.c:lfs_dir_commit_commit" label: "lfs_dir_commit_commit\nlfs.c:1904:12\n0 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_commit_commit" targetname: "lfs.c:lfs_dir_commitattr" label: "lfs.c:1906:12" }
+node: { title: "lfs.c:lfs_file_flush" label: "lfs_file_flush\nlfs.c:3314:12\n144 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_file_flush" targetname: "memset" }
+edge: { sourcename: "lfs.c:lfs_file_flush" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_file_flush" targetname: "lfs.c:lfs_file_flushedread" label: "lfs.c:3341:35" }
+edge: { sourcename: "lfs.c:lfs_file_flush" targetname: "lfs.c:lfs_file_flushedwrite" label: "lfs.c:3346:23" }
+edge: { sourcename: "lfs.c:lfs_file_flush" targetname: "lfs.c:lfs_bd_flush" label: "lfs.c:3360:27" }
+edge: { sourcename: "lfs.c:lfs_file_flush" targetname: "printf" label: "lfs.c:3371:17" }
+edge: { sourcename: "lfs.c:lfs_file_flush" targetname: "lfs.c:lfs_file_relocate" label: "lfs.c:3372:23" }
+node: { title: "lfs.c:lfs_file_write_" label: "lfs_file_write_\nlfs.c:3620:20\n48 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_file_write_" targetname: "__assert_func" label: "lfs.c:3622:5" }
+edge: { sourcename: "lfs.c:lfs_file_write_" targetname: "lfs.c:lfs_file_flush" label: "lfs.c:3626:19" }
+edge: { sourcename: "lfs.c:lfs_file_write_" targetname: "lfs.c:lfs_file_flushedwrite" label: "lfs.c:3654:25" }
+edge: { sourcename: "lfs.c:lfs_file_write_" targetname: "lfs.c:lfs_file_flushedwrite" label: "lfs.c:3647:31" }
+node: { title: "lfs.c:lfs_bd_sync.constprop.0" label: "lfs_bd_sync.constprop\nlfs.c:211:12\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_bd_sync.constprop.0" targetname: "lfs.c:lfs_bd_flush" label: "lfs.c:215:15" }
+edge: { sourcename: "lfs.c:lfs_bd_sync.constprop.0" targetname: "__indirect_call" label: "lfs.c:220:11" }
+edge: { sourcename: "lfs.c:lfs_bd_sync.constprop.0" targetname: "__assert_func" label: "lfs.c:221:5" }
+node: { title: "lfs.c:lfs_dir_commitcrc" label: "lfs_dir_commitcrc\nlfs.c:1641:12\n64 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_commitcrc" targetname: "lfs.c:lfs_bd_read" label: "lfs.c:1671:23" }
+edge: { sourcename: "lfs.c:lfs_dir_commitcrc" targetname: "lfs.c:lfs_bd_crc.constprop.0" label: "lfs.c:1692:23" }
+edge: { sourcename: "lfs.c:lfs_dir_commitcrc" targetname: "lfs.c:lfs_dir_commitattr" label: "lfs.c:1700:23" }
+edge: { sourcename: "lfs.c:lfs_dir_commitcrc" targetname: "__bswapsi2" }
+edge: { sourcename: "lfs.c:lfs_dir_commitcrc" targetname: "lfs_crc" label: "lfs.c:1718:23" }
+edge: { sourcename: "lfs.c:lfs_dir_commitcrc" targetname: "lfs.c:lfs_bd_prog" label: "lfs.c:1721:19" }
+edge: { sourcename: "lfs.c:lfs_dir_commitcrc" targetname: "lfs.c:lfs_bd_sync.constprop.0" label: "lfs.c:1744:23" }
+edge: { sourcename: "lfs.c:lfs_dir_commitcrc" targetname: "lfs.c:lfs_bd_crc.constprop.0" label: "lfs.c:1757:15" }
+edge: { sourcename: "lfs.c:lfs_dir_commitcrc" targetname: "lfs.c:lfs_bd_crc.constprop.0" label: "lfs.c:1771:11" }
+node: { title: "lfs.c:lfs_dir_compact" label: "lfs_dir_compact\nlfs.c:1924:12\n128 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:1946:18" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_bd_erase" label: "lfs.c:1967:23" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_dir_commitprog" label: "lfs.c:1977:19" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_dir_traverse.constprop.0" label: "lfs.c:1988:19" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_pair_isnull" label: "lfs.c:2003:18" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_dir_commitattr" label: "lfs.c:2005:23" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_gstate_xor" label: "lfs.c:2020:17" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_gstate_xor" label: "lfs.c:2021:17" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_gstate_xor" label: "lfs.c:2023:13" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_dir_getgstate" label: "lfs.c:2026:19" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_gstate_iszero" label: "lfs.c:2031:18" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_dir_commitattr" label: "lfs.c:2033:23" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_dir_commitcrc" label: "lfs.c:2045:19" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "__assert_func" label: "lfs.c:2054:13" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "printf" label: "lfs.c:2072:13" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2076:13" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "printf" label: "lfs.c:2077:13" }
+edge: { sourcename: "lfs.c:lfs_dir_compact" targetname: "lfs.c:lfs_alloc" label: "lfs.c:2083:19" }
+node: { title: "lfs.c:lfs_dir_split" label: "lfs_dir_split\nlfs.c:1852:12\n80 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_split" targetname: "lfs.c:lfs_dir_alloc" label: "lfs.c:1857:15" }
+edge: { sourcename: "lfs.c:lfs_dir_split" targetname: "lfs.c:lfs_dir_compact" label: "lfs.c:1867:15" }
+edge: { sourcename: "lfs.c:lfs_dir_split" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:1877:9" }
+node: { title: "lfs.c:lfs_dir_relocatingcommit" label: "lfs_dir_relocatingcommit\nlfs.c:2205:12\n144 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "__assert_func" label: "lfs.c:2217:13" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "__assert_func" label: "lfs.c:2230:9" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_fs_pred" label: "lfs.c:2231:19" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_dir_traverse.constprop.0" label: "lfs.c:2257:19" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_gstate_xor" label: "lfs.c:2272:9" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_gstate_xor" label: "lfs.c:2273:9" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_gstate_xor" label: "lfs.c:2274:9" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_gstate_iszero" label: "lfs.c:2276:14" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_dir_getgstate" label: "lfs.c:2277:19" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_dir_commitattr" label: "lfs.c:2283:19" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_dir_commitcrc" label: "lfs.c:2295:15" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "__assert_func" label: "lfs.c:2304:9" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_dir_traverse.constprop.0" label: "lfs.c:2110:23" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_dir_split" label: "lfs.c:2151:19" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "printf" label: "lfs.c:2160:13" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2169:16" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_fs_size_" label: "lfs.c:2172:28" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "printf" label: "lfs.c:2182:13" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_dir_split" label: "lfs.c:2183:23" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "printf" label: "lfs.c:2192:17" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_dir_compact" label: "lfs.c:2200:12" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2336:13" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2362:21" }
+edge: { sourcename: "lfs.c:lfs_dir_relocatingcommit" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:2365:27" }
+node: { title: "lfs.c:lfs_dir_orphaningcommit" label: "lfs_dir_orphaningcommit\nlfs.c:2378:12\n144 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2383:29" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_file_relocate" label: "lfs.c:3304:15" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_file_flush" label: "lfs.c:2391:19" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_dir_relocatingcommit" label: "lfs.c:2401:17" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2409:9" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_dir_getgstate" label: "lfs.c:2420:19" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_dir_relocatingcommit" label: "lfs.c:2429:17" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "printf" label: "lfs.c:2444:9" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2450:13" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2457:17" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2463:21" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_fs_parent" label: "lfs.c:2470:26" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_fs_preporphans" label: "lfs.c:2479:23" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_gstate_hasmovehere" label: "lfs.c:2487:17" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "printf" label: "lfs.c:2489:17" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_dir_relocatingcommit" label: "lfs.c:2500:21" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_fs_pred" label: "lfs.c:2520:19" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "__assert_func" label: "lfs.c:2524:9" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_gstate_hasmovehere" label: "lfs.c:2539:17" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_fs_preporphans" label: "lfs.c:2530:23" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "printf" label: "lfs.c:2541:17" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "lfs.c:lfs_dir_relocatingcommit" label: "lfs.c:2551:21" }
+edge: { sourcename: "lfs.c:lfs_dir_orphaningcommit" targetname: "memcpy" }
+node: { title: "lfs.c:lfs_fs_deorphan" label: "lfs_fs_deorphan\nlfs.c:4930:12\n176 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "memset" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:4952:23" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_fs_parent" label: "lfs.c:4961:34" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:4968:40" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_pair_issync" label: "lfs.c:4975:26" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "printf" label: "lfs.c:4977:25" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_gstate_hasmovehere" label: "lfs.c:4986:29" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "printf" label: "lfs.c:4988:29" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_dir_orphaningcommit" label: "lfs.c:4995:33" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "printf" label: "lfs.c:5020:21" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_dir_getgstate" label: "lfs.c:5024:27" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_dir_orphaningcommit" label: "lfs.c:5031:33" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "memcpy" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_pair_isnull" label: "lfs.c:4951:17" }
+edge: { sourcename: "lfs.c:lfs_fs_deorphan" targetname: "lfs.c:lfs_fs_preporphans" label: "lfs.c:5056:12" }
+node: { title: "lfs.c:lfs_dir_commit" label: "lfs_dir_commit\nlfs.c:2571:12\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_commit" targetname: "lfs.c:lfs_dir_orphaningcommit" label: "lfs.c:2573:19" }
+edge: { sourcename: "lfs.c:lfs_dir_commit" targetname: "lfs.c:lfs_fs_deorphan" label: "lfs.c:2582:19" }
+node: { title: "lfs.c:lfs_fs_forceconsistency" label: "lfs_fs_forceconsistency\nlfs.c:5061:12\n80 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_fs_forceconsistency" targetname: "printf" label: "lfs.c:4860:5" }
+edge: { sourcename: "lfs.c:lfs_fs_forceconsistency" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:4865:15" }
+edge: { sourcename: "lfs.c:lfs_fs_forceconsistency" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:4881:11" }
+edge: { sourcename: "lfs.c:lfs_fs_forceconsistency" targetname: "lfs.c:lfs_fs_deorphan" label: "lfs.c:5072:11" }
+edge: { sourcename: "lfs.c:lfs_fs_forceconsistency" targetname: "printf" label: "lfs.c:4900:5" }
+edge: { sourcename: "lfs.c:lfs_fs_forceconsistency" targetname: "__assert_func" label: "lfs.c:4907:5" }
+edge: { sourcename: "lfs.c:lfs_fs_forceconsistency" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:4911:15" }
+edge: { sourcename: "lfs.c:lfs_fs_forceconsistency" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:4919:11" }
+node: { title: "lfs.c:lfs_dir_drop" label: "lfs_dir_drop\nlfs.c:1831:12\n32 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_dir_drop" targetname: "lfs.c:lfs_dir_getgstate" label: "lfs.c:1833:15" }
+edge: { sourcename: "lfs.c:lfs_dir_drop" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:1840:11" }
+node: { title: "lfs.c:lfs_file_sync_" label: "lfs_file_sync_\nlfs.c:3395:12\n64 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_file_sync_" targetname: "lfs.c:lfs_file_flush" label: "lfs.c:3401:15" }
+edge: { sourcename: "lfs.c:lfs_file_sync_" targetname: "lfs.c:lfs_pair_isnull" label: "lfs.c:3409:14" }
+edge: { sourcename: "lfs.c:lfs_file_sync_" targetname: "lfs.c:lfs_bd_sync.constprop.0" label: "lfs.c:3413:19" }
+edge: { sourcename: "lfs.c:lfs_file_sync_" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:3440:15" }
+node: { title: "lfs.c:lfs_file_close_" label: "lfs_file_close_\nlfs.c:3210:12\n16 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_file_close_" targetname: "lfs.c:lfs_file_sync_" label: "lfs.c:3212:15" }
+edge: { sourcename: "lfs.c:lfs_file_close_" targetname: "free" label: "lfs_util.h:243:5" }
+node: { title: "lfs.c:lfs_commitattr" label: "lfs_commitattr\nlfs.c:4099:12\n96 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_commitattr" targetname: "lfs.c:lfs_dir_find" label: "lfs.c:4102:22" }
+edge: { sourcename: "lfs.c:lfs_commitattr" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:4111:19" }
+edge: { sourcename: "lfs.c:lfs_commitattr" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:4117:12" }
+node: { title: "lfs.c:lfs_file_opencfg_" label: "lfs_file_opencfg_\nlfs.c:3035:12\n96 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "lfs.c:lfs_dir_find" label: "lfs.c:3059:22" }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "lfs.c:lfs_fs_forceconsistency" label: "lfs.c:3041:19" }
+node: { title: "strlen" label: "strlen\n/nix/store/pij3yqk6b6iygld7xdgg2pb2amb4fa8s-riscv32-none-elf-gcc-13.2.0/riscv32-none-elf/sys-include/string.h:41:9" shape : ellipse }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "strlen" label: "lfs.c:3081:27" }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:3088:15" }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:3116:15" }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:3129:30" }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "malloc" label: "lfs_util.h:231:12" }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "lfs.c:lfs_cache_zero.isra.0" label: "lfs.c:3165:5" }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:3178:30" }
+edge: { sourcename: "lfs.c:lfs_file_opencfg_" targetname: "lfs.c:lfs_file_close_" label: "lfs.c:3197:5" }
+node: { title: "lfs.c:lfs_file_seek_" label: "lfs_file_seek_\nlfs.c:3664:19\n48 bytes (static)" }
+edge: { sourcename: "lfs.c:lfs_file_seek_" targetname: "lfs.c:lfs_ctz_index.isra.0" label: "lfs.c:3704:22" }
+edge: { sourcename: "lfs.c:lfs_file_seek_" targetname: "lfs.c:lfs_ctz_index.isra.0" label: "lfs.c:3706:22" }
+edge: { sourcename: "lfs.c:lfs_file_seek_" targetname: "lfs.c:lfs_file_flush" label: "lfs.c:3717:15" }
+node: { title: "lfs_format" label: "lfs_format\nlfs.c:5884:5\n112 bytes (static)" }
+edge: { sourcename: "lfs_format" targetname: "lfs.c:lfs_init" label: "lfs.c:4335:15" }
+edge: { sourcename: "lfs_format" targetname: "__assert_func" label: "lfs.c:4340:9" }
+edge: { sourcename: "lfs_format" targetname: "memset" }
+edge: { sourcename: "lfs_format" targetname: "lfs.c:lfs_dir_alloc" label: "lfs.c:4352:15" }
+edge: { sourcename: "lfs_format" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:4368:15" }
+edge: { sourcename: "lfs_format" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:4380:15" }
+edge: { sourcename: "lfs_format" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:4386:15" }
+edge: { sourcename: "lfs_format" targetname: "lfs.c:lfs_deinit" label: "lfs.c:4393:5" }
+node: { title: "lfs_unmount" label: "lfs_unmount\nlfs.c:5943:5\n0 bytes (static)" }
+edge: { sourcename: "lfs_unmount" targetname: "lfs.c:lfs_deinit" label: "lfs.c:4572:12" }
+node: { title: "lfs_mount" label: "lfs_mount\nlfs.c:5914:5\n128 bytes (static)" }
+edge: { sourcename: "lfs_mount" targetname: "lfs.c:lfs_init" label: "lfs.c:4400:15" }
+edge: { sourcename: "lfs_mount" targetname: "memset" }
+edge: { sourcename: "lfs_mount" targetname: "lfs.c:lfs_pair_issync" label: "lfs.c:4412:13" }
+edge: { sourcename: "lfs_mount" targetname: "printf" label: "lfs.c:4413:13" }
+edge: { sourcename: "lfs_mount" targetname: "lfs.c:lfs_dir_fetchmatch" label: "lfs.c:4426:26" }
+edge: { sourcename: "lfs_mount" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:4445:19" }
+edge: { sourcename: "lfs_mount" targetname: "printf" label: "lfs.c:4459:17" }
+edge: { sourcename: "lfs_mount" targetname: "printf" label: "lfs.c:4474:17" }
+edge: { sourcename: "lfs_mount" targetname: "printf" label: "lfs.c:4489:21" }
+edge: { sourcename: "lfs_mount" targetname: "printf" label: "lfs.c:4500:21" }
+edge: { sourcename: "lfs_mount" targetname: "printf" label: "lfs.c:4511:21" }
+edge: { sourcename: "lfs_mount" targetname: "printf" label: "lfs.c:4526:17" }
+edge: { sourcename: "lfs_mount" targetname: "printf" label: "lfs.c:4535:17" }
+edge: { sourcename: "lfs_mount" targetname: "lfs.c:lfs_dir_getgstate" label: "lfs.c:4543:15" }
+edge: { sourcename: "lfs_mount" targetname: "lfs.c:lfs_unmount_" label: "lfs.c:4567:5" }
+edge: { sourcename: "lfs_mount" targetname: "lfs.c:lfs_pair_isnull" label: "lfs.c:4410:13" }
+edge: { sourcename: "lfs_mount" targetname: "lfs.c:lfs_gstate_iszero" label: "lfs.c:4550:10" }
+edge: { sourcename: "lfs_mount" targetname: "printf" label: "lfs.c:4551:9" }
+edge: { sourcename: "lfs_mount" targetname: "memcpy" }
+node: { title: "lfs_remove" label: "lfs_remove\nlfs.c:5958:5\n112 bytes (static)" }
+edge: { sourcename: "lfs_remove" targetname: "lfs.c:lfs_fs_forceconsistency" label: "lfs.c:3851:15" }
+edge: { sourcename: "lfs_remove" targetname: "lfs.c:lfs_dir_find" label: "lfs.c:3857:22" }
+edge: { sourcename: "lfs_remove" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:3867:26" }
+edge: { sourcename: "lfs_remove" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:3874:15" }
+edge: { sourcename: "lfs_remove" targetname: "lfs.c:lfs_fs_preporphans" label: "lfs.c:3884:15" }
+edge: { sourcename: "lfs_remove" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:3897:11" }
+edge: { sourcename: "lfs_remove" targetname: "lfs.c:lfs_fs_preporphans" label: "lfs.c:3907:15" }
+edge: { sourcename: "lfs_remove" targetname: "lfs.c:lfs_fs_pred" label: "lfs.c:3912:15" }
+edge: { sourcename: "lfs_remove" targetname: "lfs.c:lfs_dir_drop" label: "lfs.c:3917:15" }
+node: { title: "lfs_rename" label: "lfs_rename\nlfs.c:5974:5\n224 bytes (static)" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_fs_forceconsistency" label: "lfs.c:3930:15" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_dir_find" label: "lfs.c:3937:25" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_dir_find" label: "lfs.c:3945:26" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:3952:22" }
+edge: { sourcename: "lfs_rename" targetname: "strlen" label: "lfs.c:3959:27" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:3980:26" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:3988:15" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_fs_preporphans" label: "lfs.c:3998:15" }
+edge: { sourcename: "lfs_rename" targetname: "strlen" label: "lfs.c:4015:40" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:4015:11" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:4033:15" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_fs_preporphans" label: "lfs.c:4045:15" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_fs_pred" label: "lfs.c:4050:15" }
+edge: { sourcename: "lfs_rename" targetname: "lfs.c:lfs_dir_drop" label: "lfs.c:4055:15" }
+node: { title: "lfs_stat" label: "lfs_stat\nlfs.c:5989:5\n64 bytes (static)" }
+edge: { sourcename: "lfs_stat" targetname: "lfs.c:lfs_dir_find" label: "lfs.c:3840:22" }
+edge: { sourcename: "lfs_stat" targetname: "lfs.c:lfs_dir_getinfo" label: "lfs.c:3845:12" }
+node: { title: "lfs_getattr" label: "lfs_getattr\nlfs.c:6003:13\n80 bytes (static)" }
+edge: { sourcename: "lfs_getattr" targetname: "lfs.c:lfs_dir_find" label: "lfs.c:4068:22" }
+edge: { sourcename: "lfs_getattr" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:4077:19" }
+edge: { sourcename: "lfs_getattr" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:4083:11" }
+node: { title: "lfs_setattr" label: "lfs_setattr\nlfs.c:6020:5\n0 bytes (static)" }
+edge: { sourcename: "lfs_setattr" targetname: "lfs.c:lfs_commitattr" label: "lfs.c:4129:12" }
+node: { title: "lfs_removeattr" label: "lfs_removeattr\nlfs.c:6038:5\n0 bytes (static)" }
+edge: { sourcename: "lfs_removeattr" targetname: "lfs.c:lfs_commitattr" label: "lfs.c:4135:12" }
+node: { title: "lfs_file_open" label: "lfs_file_open\nlfs.c:6054:5\n32 bytes (static)" }
+edge: { sourcename: "lfs_file_open" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6061:5" }
+edge: { sourcename: "lfs_file_open" targetname: "__assert_func" label: "lfs.c:6061:5" }
+edge: { sourcename: "lfs_file_open" targetname: "lfs.c:lfs_file_opencfg_" label: "lfs.c:3205:15" }
+node: { title: "lfs_file_opencfg" label: "lfs_file_opencfg\nlfs.c:6071:5\n32 bytes (static)" }
+edge: { sourcename: "lfs_file_opencfg" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6082:5" }
+edge: { sourcename: "lfs_file_opencfg" targetname: "__assert_func" label: "lfs.c:6082:5" }
+edge: { sourcename: "lfs_file_opencfg" targetname: "lfs.c:lfs_file_opencfg_" label: "lfs.c:6084:11" }
+node: { title: "lfs_file_close" label: "lfs_file_close\nlfs.c:6091:5\n16 bytes (static)" }
+edge: { sourcename: "lfs_file_close" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6097:5" }
+edge: { sourcename: "lfs_file_close" targetname: "__assert_func" label: "lfs.c:6097:5" }
+edge: { sourcename: "lfs_file_close" targetname: "lfs.c:lfs_file_close_" label: "lfs.c:6099:11" }
+node: { title: "lfs_file_sync" label: "lfs_file_sync\nlfs.c:6107:5\n16 bytes (static)" }
+edge: { sourcename: "lfs_file_sync" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6113:5" }
+edge: { sourcename: "lfs_file_sync" targetname: "__assert_func" label: "lfs.c:6113:5" }
+edge: { sourcename: "lfs_file_sync" targetname: "lfs.c:lfs_file_sync_" label: "lfs.c:6115:11" }
+node: { title: "lfs_file_read" label: "lfs_file_read\nlfs.c:6123:13\n32 bytes (static)" }
+edge: { sourcename: "lfs_file_read" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6131:5" }
+edge: { sourcename: "lfs_file_read" targetname: "__assert_func" label: "lfs.c:6131:5" }
+edge: { sourcename: "lfs_file_read" targetname: "__assert_func" label: "lfs.c:3519:5" }
+edge: { sourcename: "lfs_file_read" targetname: "lfs.c:lfs_file_flushedread" label: "lfs.c:3531:12" }
+edge: { sourcename: "lfs_file_read" targetname: "lfs.c:lfs_file_flush" label: "lfs.c:3524:19" }
+node: { title: "lfs_file_write" label: "lfs_file_write\nlfs.c:6141:13\n32 bytes (static)" }
+edge: { sourcename: "lfs_file_write" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6149:5" }
+edge: { sourcename: "lfs_file_write" targetname: "__assert_func" label: "lfs.c:6149:5" }
+edge: { sourcename: "lfs_file_write" targetname: "lfs.c:lfs_file_write_" label: "lfs.c:6151:23" }
+node: { title: "lfs_file_seek" label: "lfs_file_seek\nlfs.c:6159:12\n32 bytes (static)" }
+edge: { sourcename: "lfs_file_seek" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6167:5" }
+edge: { sourcename: "lfs_file_seek" targetname: "__assert_func" label: "lfs.c:6167:5" }
+edge: { sourcename: "lfs_file_seek" targetname: "lfs.c:lfs_file_seek_" label: "lfs.c:6169:22" }
+node: { title: "lfs_file_truncate" label: "lfs_file_truncate\nlfs.c:6177:5\n48 bytes (static)" }
+edge: { sourcename: "lfs_file_truncate" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6184:5" }
+edge: { sourcename: "lfs_file_truncate" targetname: "__assert_func" label: "lfs.c:6184:5" }
+edge: { sourcename: "lfs_file_truncate" targetname: "__assert_func" label: "lfs.c:3729:5" }
+edge: { sourcename: "lfs_file_truncate" targetname: "lfs.c:lfs_file_seek_" label: "lfs.c:3741:30" }
+edge: { sourcename: "lfs_file_truncate" targetname: "lfs.c:lfs_file_flushedread" label: "lfs.c:3748:19" }
+edge: { sourcename: "lfs_file_truncate" targetname: "memcpy" }
+edge: { sourcename: "lfs_file_truncate" targetname: "lfs.c:lfs_file_flush" label: "lfs.c:3764:23" }
+edge: { sourcename: "lfs_file_truncate" targetname: "lfs.c:lfs_ctz_find.constprop.0" label: "lfs.c:3770:19" }
+edge: { sourcename: "lfs_file_truncate" targetname: "lfs.c:lfs_file_seek_" label: "lfs.c:3786:26" }
+edge: { sourcename: "lfs_file_truncate" targetname: "lfs.c:lfs_file_write_" label: "lfs.c:3793:19" }
+edge: { sourcename: "lfs_file_truncate" targetname: "lfs.c:lfs_file_seek_" label: "lfs.c:3801:22" }
+node: { title: "lfs_file_tell" label: "lfs_file_tell\nlfs.c:6194:12\n16 bytes (static)" }
+edge: { sourcename: "lfs_file_tell" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6200:5" }
+edge: { sourcename: "lfs_file_tell" targetname: "__assert_func" label: "lfs.c:6200:5" }
+node: { title: "lfs_file_rewind" label: "lfs_file_rewind\nlfs.c:6209:5\n16 bytes (static)" }
+edge: { sourcename: "lfs_file_rewind" targetname: "lfs.c:lfs_file_seek_" label: "lfs.c:3816:22" }
+node: { title: "lfs_file_size" label: "lfs_file_size\nlfs.c:6223:12\n16 bytes (static)" }
+edge: { sourcename: "lfs_file_size" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6229:5" }
+edge: { sourcename: "lfs_file_size" targetname: "__assert_func" label: "lfs.c:6229:5" }
+node: { title: "lfs_mkdir" label: "lfs_mkdir\nlfs.c:6239:5\n192 bytes (static)" }
+edge: { sourcename: "lfs_mkdir" targetname: "lfs.c:lfs_fs_forceconsistency" label: "lfs.c:2597:15" }
+edge: { sourcename: "lfs_mkdir" targetname: "lfs.c:lfs_dir_find" label: "lfs.c:2605:11" }
+edge: { sourcename: "lfs_mkdir" targetname: "strlen" label: "lfs.c:2611:23" }
+edge: { sourcename: "lfs_mkdir" targetname: "lfs.c:lfs_dir_alloc" label: "lfs.c:2619:11" }
+edge: { sourcename: "lfs_mkdir" targetname: "memcpy" }
+edge: { sourcename: "lfs_mkdir" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:2627:15" }
+edge: { sourcename: "lfs_mkdir" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:2635:11" }
+edge: { sourcename: "lfs_mkdir" targetname: "lfs.c:lfs_fs_preporphans" label: "lfs.c:2645:15" }
+edge: { sourcename: "lfs_mkdir" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:2659:15" }
+edge: { sourcename: "lfs_mkdir" targetname: "lfs.c:lfs_fs_preporphans" label: "lfs.c:2668:15" }
+edge: { sourcename: "lfs_mkdir" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:2676:11" }
+node: { title: "lfs_dir_open" label: "lfs_dir_open\nlfs.c:6254:5\n48 bytes (static)" }
+edge: { sourcename: "lfs_dir_open" targetname: "lfs.c:lfs_mlist_isopen" label: "lfs.c:6260:5" }
+edge: { sourcename: "lfs_dir_open" targetname: "__assert_func" label: "lfs.c:6260:5" }
+edge: { sourcename: "lfs_dir_open" targetname: "lfs.c:lfs_dir_find" label: "lfs.c:2692:22" }
+edge: { sourcename: "lfs_dir_open" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:2708:26" }
+edge: { sourcename: "lfs_dir_open" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:2717:15" }
+node: { title: "lfs_dir_close" label: "lfs_dir_close\nlfs.c:6269:5\n0 bytes (static)" }
+node: { title: "lfs_dir_read" label: "lfs_dir_read\nlfs.c:6283:5\n32 bytes (static)" }
+edge: { sourcename: "lfs_dir_read" targetname: "memset" }
+edge: { sourcename: "lfs_dir_read" targetname: "strcpy" label: "lfs.c:2748:9" }
+edge: { sourcename: "lfs_dir_read" targetname: "strcpy" label: "lfs.c:2753:9" }
+edge: { sourcename: "lfs_dir_read" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:2764:23" }
+edge: { sourcename: "lfs_dir_read" targetname: "lfs.c:lfs_dir_getinfo" label: "lfs.c:2772:19" }
+node: { title: "lfs_dir_seek" label: "lfs_dir_seek\nlfs.c:6298:5\n32 bytes (static)" }
+edge: { sourcename: "lfs_dir_seek" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:2831:15" }
+edge: { sourcename: "lfs_dir_seek" targetname: "lfs.c:lfs_pair_cmp" label: "lfs.c:2799:27" }
+edge: { sourcename: "lfs_dir_seek" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:2807:19" }
+node: { title: "lfs_dir_tell" label: "lfs_dir_tell\nlfs.c:6313:12\n0 bytes (static)" }
+node: { title: "lfs_dir_rewind" label: "lfs_dir_rewind\nlfs.c:6327:5\n16 bytes (static)" }
+edge: { sourcename: "lfs_dir_rewind" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:2831:15" }
+node: { title: "lfs_fs_stat" label: "lfs_fs_stat\nlfs.c:6341:5\n80 bytes (static)" }
+edge: { sourcename: "lfs_fs_stat" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:4587:19" }
+edge: { sourcename: "lfs_fs_stat" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:4593:26" }
+node: { title: "lfs_fs_size" label: "lfs_fs_size\nlfs.c:6355:13\n0 bytes (static)" }
+edge: { sourcename: "lfs_fs_size" targetname: "lfs.c:lfs_fs_size_" label: "lfs.c:6362:23" }
+node: { title: "lfs_fs_traverse" label: "lfs_fs_traverse\nlfs.c:6369:5\n0 bytes (static)" }
+edge: { sourcename: "lfs_fs_traverse" targetname: "lfs.c:lfs_fs_traverse_" label: "lfs.c:6377:11" }
+node: { title: "lfs_fs_mkconsistent" label: "lfs_fs_mkconsistent\nlfs.c:6385:5\n64 bytes (static)" }
+edge: { sourcename: "lfs_fs_mkconsistent" targetname: "lfs.c:lfs_fs_forceconsistency" label: "lfs.c:5084:15" }
+edge: { sourcename: "lfs_fs_mkconsistent" targetname: "lfs.c:lfs_gstate_xor" label: "lfs.c:5091:5" }
+edge: { sourcename: "lfs_fs_mkconsistent" targetname: "lfs.c:lfs_gstate_xor" label: "lfs.c:5092:5" }
+edge: { sourcename: "lfs_fs_mkconsistent" targetname: "lfs.c:lfs_gstate_iszero" label: "lfs.c:5093:10" }
+edge: { sourcename: "lfs_fs_mkconsistent" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:5096:15" }
+edge: { sourcename: "lfs_fs_mkconsistent" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:5101:15" }
+node: { title: "lfs_fs_gc" label: "lfs_fs_gc\nlfs.c:6401:5\n48 bytes (static)" }
+edge: { sourcename: "lfs_fs_gc" targetname: "lfs.c:lfs_fs_forceconsistency" label: "lfs.c:5134:15" }
+edge: { sourcename: "lfs_fs_gc" targetname: "memset" }
+edge: { sourcename: "lfs_fs_gc" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:5147:19" }
+edge: { sourcename: "lfs_fs_gc" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:5159:23" }
+edge: { sourcename: "lfs_fs_gc" targetname: "lfs.c:lfs_pair_isnull" label: "lfs.c:5146:17" }
+edge: { sourcename: "lfs_fs_gc" targetname: "lfs.c:lfs_alloc_scan" label: "lfs.c:5169:15" }
+node: { title: "lfs_fs_grow" label: "lfs_fs_grow\nlfs.c:6417:5\n80 bytes (static)" }
+edge: { sourcename: "lfs_fs_grow" targetname: "__assert_func" label: "lfs.c:5182:5" }
+edge: { sourcename: "lfs_fs_grow" targetname: "lfs.c:lfs_dir_fetch" label: "lfs.c:5189:19" }
+edge: { sourcename: "lfs_fs_grow" targetname: "lfs.c:lfs_dir_get" label: "lfs.c:5196:26" }
+edge: { sourcename: "lfs_fs_grow" targetname: "lfs.c:lfs_dir_commit" label: "lfs.c:5207:15" }
+}
