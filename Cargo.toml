@@ -22,15 +22,15 @@ capsules-extra = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd
 capsules-system = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 components = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 kernel = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-qemu_rv32_virt_chip = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 rv32i = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 sifive = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 tock-tbf = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 tock_build_scripts = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 
-qemu_rv32_virt = { git = "https://github.com/encapfn/tock", rev = "ac1bbd4c895b104d40e40d48682ff9a98d9914c3" }
-earlgrey_board_lib = { git = "https://github.com/encapfn/tock", rev = "ac1bbd4c895b104d40e40d48682ff9a98d9914c3" }
-earlgrey = { git = "https://github.com/encapfn/tock", rev = "ac1bbd4c895b104d40e40d48682ff9a98d9914c3" }
+qemu_rv32_virt_chip = { git = "https://github.com/encapfn/tock", rev = "a89dc61f197001a9cbb9c81e99285b838e49341a" }
+qemu_rv32_virt = { git = "https://github.com/encapfn/tock", rev = "a89dc61f197001a9cbb9c81e99285b838e49341a" }
+earlgrey_board_lib = { git = "https://github.com/encapfn/tock", rev = "a89dc61f197001a9cbb9c81e99285b838e49341a" }
+earlgrey = { git = "https://github.com/encapfn/tock", rev = "a89dc61f197001a9cbb9c81e99285b838e49341a" }
 
 [patch."https://github.com/encapfn/tock"]
 capsules-core = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
@@ -38,7 +38,6 @@ capsules-extra = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd
 capsules-system = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 components = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 kernel = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-qemu_rv32_virt_chip = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 rv32i = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 sifive = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
 

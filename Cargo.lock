@@ -44,12 +44,12 @@ checksum = "cf4b9d6a944f767f8e5e0db018570623c85f3d925ac718db4e06d0187adb21c1"
 [[package]]
 name = "capsules-aes-gcm"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 dependencies = [
- "enum_primitive 0.1.0 (git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3)",
+ "enum_primitive 0.1.0 (git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a)",
  "ghash",
  "kernel",
- "tickv 2.0.0 (git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3)",
+ "tickv 2.0.0 (git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a)",
 ]
 
 [[package]]
@@ -139,7 +139,7 @@ dependencies = [
 [[package]]
 name = "earlgrey"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 dependencies = [
  "kernel",
  "lowrisc",
@@ -149,7 +149,7 @@ dependencies = [
 [[package]]
 name = "earlgrey_board_lib"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 dependencies = [
  "capsules-aes-gcm",
  "capsules-core",
@@ -160,7 +160,7 @@ dependencies = [
  "kernel",
  "lowrisc",
  "rv32i",
- "tock-tbf 0.1.0 (git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3)",
+ "tock-tbf 0.1.0 (git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a)",
 ]
 
 [[package]]
@@ -244,7 +244,7 @@ source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f22
 [[package]]
 name = "enum_primitive"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 
 [[package]]
 name = "equivalent"
@@ -375,7 +375,7 @@ checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 [[package]]
 name = "lowrisc"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 dependencies = [
  "kernel",
  "rv32i",
@@ -449,7 +449,7 @@ dependencies = [
 [[package]]
 name = "qemu_rv32_virt"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 dependencies = [
  "capsules-core",
  "capsules-extra",
@@ -459,13 +459,13 @@ dependencies = [
  "qemu_rv32_virt_chip",
  "rv32i",
  "sifive",
- "tock_build_scripts 0.1.0 (git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3)",
+ "tock_build_scripts 0.1.0 (git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a)",
 ]
 
 [[package]]
 name = "qemu_rv32_virt_chip"
 version = "0.1.0"
-source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da#1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 dependencies = [
  "kernel",
  "rv32i",
@@ -636,7 +636,7 @@ source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f22
 [[package]]
 name = "tickv"
 version = "2.0.0"
-source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 
 [[package]]
 name = "tock-cells"
@@ -656,7 +656,7 @@ source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f22
 [[package]]
 name = "tock-tbf"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 
 [[package]]
 name = "tock_build_scripts"
@@ -666,7 +666,7 @@ source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f22
 [[package]]
 name = "tock_build_scripts"
 version = "0.1.0"
-source = "git+https://github.com/encapfn/tock?rev=ac1bbd4c895b104d40e40d48682ff9a98d9914c3#ac1bbd4c895b104d40e40d48682ff9a98d9914c3"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 
 [[package]]
 name = "toml"
@@ -733,7 +733,7 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 [[package]]
 name = "virtio"
 version = "0.1.0"
-source = "git+https://github.com/tock/tock?rev=1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da#1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da"
+source = "git+https://github.com/encapfn/tock?rev=a89dc61f197001a9cbb9c81e99285b838e49341a#a89dc61f197001a9cbb9c81e99285b838e49341a"
 dependencies = [
  "kernel",
 ]
