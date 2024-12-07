@@ -31,26 +31,26 @@ encapfn_init:
 	 * place them whereever): */
         lw   t1, 1*4(a0)             /* remaining = encapfn_rtheader.data_size */
 	beqz t1, .Lzero_bss          /* short circuit if we don't have data to copy */
-        andi t3, t1, 3
-        bnez t3, .Linit_error
+        /* andi t3, t1, 3 */         /* TODO: for some reason, the PhysAddr of load segments can be aligned to less than 4 bytes? */
+        /* bnez t3, .Linit_error */
 
         lw   t0, 0*4(a0)             /* src = encapfn_rtheader.data_flash */
-        andi t3, t0, 3
-        bnez t3, .Linit_error
+        /* andi t3, t0, 3 */
+        /* bnez t3, .Linit_error */
 
         lw   t2, 2*4(a0)             /* dest = encapfn_rtheader.data_ram */
-        andi t3, t2, 3
-        bnez t3, .Linit_error
+        /* andi t3, t2, 3 */
+        /* bnez t3, .Linit_error */
 
         /* Copy data */
         beqz t1, .Lzero_bss          /* Jump to zero_bss if remaining is zero */
 
 .Ldata_loop_body:
-        lw   t3, 0(t0)               /* t3 = *src */
-        sw   t3, 0(t2)               /* *dest = t3 */
-        addi t0, t0, 4               /* src += 4 */
-        addi t1, t1, -4              /* remaining -= 4 */
-        addi t2, t2, 4               /* dest += 4 */
+        lb   t3, 0(t0)               /* t3 = *src */
+        sb   t3, 0(t2)               /* *dest = t3 */
+        addi t0, t0, 1               /* src += 1 */
+        addi t1, t1, -1              /* remaining -= 1 */
+        addi t2, t2, 1               /* dest += 1 */
         bnez t1, .Ldata_loop_body    /* Loop if there's still data remaining */
 
 .Lzero_bss:
@@ -63,14 +63,14 @@ encapfn_init:
 
 .Lbss_loop_body:
         sb   zero, 0(t1)             /* *dest = zero */
-        addi t1, a0, 1               /* dest += 1 */
-        beq  t1, t2, .Lbss_loop_body /* Iterate again if dest != end */
+        addi t1, t1, 1               /* dest += 1 */
+        bne  t1, t2, .Lbss_loop_body /* Iterate again if dest != end */
 
 .Linit_done:
-        li   a0, 0                   /* Report no error */
         la   sp, _stack_top          /* Tell the runtime the location of _stack_top */
+        li   a0, 0                   /* Report no error */
         ret
 
-.Linit_error:
-        li   a0, 1
-        ret
+/* .Linit_error: */
+/*         li   a0, 1 */
+/*         ret */

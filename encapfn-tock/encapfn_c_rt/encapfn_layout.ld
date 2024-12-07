@@ -37,9 +37,6 @@ SECTIONS {
         LONG(encapfn_fntab - ORIGIN(FLASH));
 	LONG(encapfn_fntab_length - ORIGIN(FLASH));
 
-        KEEP(*(.encapfn_hdr));
-	KEEP(*(.encapfn_init));
-
         . = ALIGN(4);
 
         encapfn_rthdr = .;
@@ -50,12 +47,17 @@ SECTIONS {
         LONG(SIZEOF(.bss));
         LONG(ADDR(.bss));
 
+        KEEP(*(.encapfn_hdr));
+	KEEP(*(.encapfn_init));
+
         *(.text.*)
+        . = ALIGN(4);
     } > FLASH
 
     /* Read-only data section. Contains strings and other global constants. */
     .rodata ALIGN(4) : {
         *(.rodata.*)
+	. = ALIGN(4);
     } > FLASH
 
     /* Sections located in RAM at runtime.
@@ -79,13 +81,15 @@ SECTIONS {
     .data ALIGN(4) : {
         /* .sdata is the RISC-V small data section */
         *(.sdata .data)
+	. = ALIGN(4);
     } > RAM AT > FLASH
 
 
     /* BSS section. These are zero-initialized static variables. */
     .bss ALIGN(4) (NOLOAD) : {
         /* .sbss is the RISC-V small data section */
-        *(.sbss .bss.*)
+        *(.sbss .bss .bss.*)
+	. = ALIGN(4);
     } > RAM AT > FLASH
 
     /* Sections we do not need. */
