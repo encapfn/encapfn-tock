@@ -1672,8 +1672,8 @@ impl<ID: EFID, M: MPU + 'static> Rv32iCRt<0, AREG7<Rv32iCABI>> for TockRv32iCRt<
             // continue execution in the generic protection-domain
             // switch routine:
             mv   t0, a7                 // Load runtime pointer
-            mv   t1, 0*4(sp)            // Load function pointer
-            lw   t2, 4*4(sp)            // Load the InvokeRes pointer
+            lw   t1, 0*4(sp)            // Load function pointer
+            lw   t2, 1*4(sp)            // Load the InvokeRes pointer
             li   t3, 0                  // Load the stack-spill immediate
             li   t5, 7                  // Load a marker indicating the source of this call
             la   t4, {invoke_sym}       // Load the generic_invoke function
