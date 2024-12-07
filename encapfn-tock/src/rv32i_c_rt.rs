@@ -320,6 +320,10 @@ pub struct TockRv32iCRtAsmState {
     // Allocation scope active across an invocation of generic_invoke,
     // set in the `execute` hook:
     active_alloc_scope: Cell<*mut ()>,
+
+    // Store a reference to the MPU to disable it for callbacks.
+    // Needs to be cast back to the concrete type once it's known.
+    mpu: *const (),
 }
 
 #[repr(C)]
@@ -434,6 +438,7 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
                 ram_region_start,
                 ram_region_length,
                 active_alloc_scope: Cell::new(core::ptr::null_mut()),
+		mpu: mpu as *const _ as *const _,
             },
 
             binary,
@@ -618,6 +623,11 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
 
         let callback_asm_ctx = &mut *callback_asm_ctx_ptr;
         let runtime = &*callback_asm_ctx.runtime;
+
+	// Disable the app MPU:
+	let mpu = &*(runtime.mpu as *const M);
+	mpu.disable_app_mpu();
+
         let alloc_scope = &*(runtime.active_alloc_scope.get()
             as *mut AllocScope<'_, <Self as EncapfnRt>::AllocTracker<'_>, <Self as EncapfnRt>::ID>);
 
@@ -687,6 +697,9 @@ impl<ID: EFID, M: MPU + 'static> TockRv32iCRt<ID, M> {
 
         callback_asm_ctx.ret_a0 = callback_ret.ret_regs[0];
         callback_asm_ctx.ret_a1 = callback_ret.ret_regs[1];
+
+	// Re-enable the app MPU:
+	mpu.enable_app_mpu();
 
         // This was a callback!
         1
