@@ -59,7 +59,9 @@ int _kill(pid_t pid, int sig) {
   return -1;
 }
 caddr_t _sbrk(int incr) {
-  return (caddr_t) -1;
+  /* return (caddr_t) -1; */
+  intptr_t nullptr = 0;
+  *((size_t *) nullptr) = 0;
 }
 int _write(__attribute__ ((unused)) int fd, __attribute__ ((unused)) const void* buf, uint32_t count) {
     return count;
