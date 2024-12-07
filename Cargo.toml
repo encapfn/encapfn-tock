@@ -17,29 +17,19 @@ edition = "2021"
 encapfn = { git = "https://github.com/encapfn/encapfn", rev = "7ec1e19bfa22cb98e45a1d132934d3630e48856a" }
 bindgen = { git = "https://github.com/encapfn/rust-bindgen", rev = "303b1f41e7ea715df515cd43ba7909bf61cf97cf" }
 
-capsules-core = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-capsules-extra = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-capsules-system = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-components = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-kernel = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-rv32i = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-sifive = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-tock-tbf = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-tock_build_scripts = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-
-qemu_rv32_virt_chip = { git = "https://github.com/encapfn/tock", rev = "a89dc61f197001a9cbb9c81e99285b838e49341a" }
-qemu_rv32_virt = { git = "https://github.com/encapfn/tock", rev = "a89dc61f197001a9cbb9c81e99285b838e49341a" }
-earlgrey_board_lib = { git = "https://github.com/encapfn/tock", rev = "a89dc61f197001a9cbb9c81e99285b838e49341a" }
-earlgrey = { git = "https://github.com/encapfn/tock", rev = "a89dc61f197001a9cbb9c81e99285b838e49341a" }
-
-[patch."https://github.com/encapfn/tock"]
-capsules-core = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-capsules-extra = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-capsules-system = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-components = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-kernel = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-rv32i = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
-sifive = { git = "https://github.com/tock/tock", rev = "1967fa7bc4dc82dd246e9a8a1838c6f227b3e6da" }
+capsules-core = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+capsules-extra = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+capsules-system = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+components = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+kernel = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+tock-tbf = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+tock_build_scripts = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+rv32i = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+sifive = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+qemu_rv32_virt_chip = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+qemu_rv32_virt = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+earlgrey_board_lib = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
+earlgrey = { git = "https://github.com/encapfn/tock", rev = "b9f9c8fad40a9dcae1d369733208112fd530f25d" }
 
 
 [profile.dev]
