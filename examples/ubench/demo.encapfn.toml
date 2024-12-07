@@ -1,0 +1,7 @@
+wrapper_name = "LibDemo"
+
+[functions.demo_nop]
+fntab_id = 0
+
+[functions.demo_invoke_callback]
+fntab_id = 1

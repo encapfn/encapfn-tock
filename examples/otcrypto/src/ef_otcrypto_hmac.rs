@@ -102,7 +102,7 @@ impl<'l, ID: EFID, RT: EncapfnRt<ID = ID>, L: LibOtCrypto<ID, RT, RT = RT>>
                     };
                     //panic!("Adding msg buf: {}, {}, {:x?}, {:?}", data.len(), data_slice.len(), &msg_buf, &*data_slice.validate(access).unwrap());
 
-		    // panic!("Calling HMAC update!");
+                    // panic!("Calling HMAC update!");
                     self.lib
                         .otcrypto_hmac_update(hmac_context.as_ptr().into(), msg_buf, alloc, access)
                         .unwrap();
@@ -254,8 +254,9 @@ impl<'l, ID: EFID, RT: EncapfnRt<ID = ID>, L: LibOtCrypto<ID, RT, RT = RT>>
                     // Copy the validated array's contents into the digest buffer,
                     // converting the u32s to u8s in the process:
                     // panic!("Hash done tag_array_val: {:x?}", &*tag_array_val);
-                    tag_array_val.iter()
-                    // core::iter::repeat(&0_u32)
+                    tag_array_val
+                        .iter()
+                        // core::iter::repeat(&0_u32)
                         .flat_map(|w| u32::to_be_bytes(*w))
                         .zip(digest.iter_mut())
                         .for_each(|(src, dst)| *dst = src);
@@ -303,9 +304,9 @@ impl<'l, ID: EFID, RT: EncapfnRt<ID = ID>, L: LibOtCrypto<ID, RT, RT = RT>> dige
         let access = self.access_scope.take().unwrap();
         let alloc = self.alloc_scope.take().unwrap();
 
-	// Initialize the entropy complex, required for wiping the OTBN memories
-	// in between operations:
-	self.lib.entropy_complex_init(alloc, access).unwrap();
+        // Initialize the entropy complex, required for wiping the OTBN memories
+        // in between operations:
+        self.lib.entropy_complex_init(alloc, access).unwrap();
 
         //self.lib.rt().allocate_stacked_t::<libotcrypto_bindings::hmac_context_t, _, _>(alloc, |hmac_context, alloc| {
         self.with_hmac_context(alloc, access, |alloc, access, hmac_context| {

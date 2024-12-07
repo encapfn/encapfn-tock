@@ -1,0 +1,44 @@
+# Licensed under the Apache License, Version 2.0 or the MIT License.
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# Copyright Tock Contributors 2022.
+
+[package]
+name = "encapfn-earlgrey-cw310-ubench"
+version.workspace = true
+authors.workspace = true
+build = "build.rs"
+edition.workspace = true
+
+[dependencies]
+earlgrey.workspace = true
+earlgrey_board_lib.workspace = true
+kernel = { workspace = true, features = [ "debug_load_processes" ] }
+
+encapfn.workspace = true
+encapfn-tock = { path = "../../../encapfn-tock" }
+encapfn-tock-ubench = { path = "../../ubench" }
+
+[build-dependencies]
+tock_build_scripts.workspace = true
+
+
+[features]
+default = ["fpga_cw310"]
+
+# OpenTitan SoC design can be synthesized or compiled for different targets. A
+# target can be a specific FPGA board, an ASIC technology, or a simulation tool.
+# Please see: https://docs.opentitan.org/doc/ug/getting_started/ for further
+# information.
+#
+# OpenTitan CPU and possibly other components must be configured appropriately
+# for a specific target:
+#    - fpga_cw310:
+#      OpenTitan SoC design running on CW310 FPGA.
+#
+#    - sim_verilator:
+#      OpenTitan SoC design simulated in Verilator.
+fpga_cw310 = ["earlgrey_board_lib/fpga_cw310"]
+sim_verilator = ["earlgrey_board_lib/sim_verilator"]
+# This is used to indicate that we should include tests that only pass on
+# hardware.
+hardware_tests = ["earlgrey_board_lib/hardware_tests"]

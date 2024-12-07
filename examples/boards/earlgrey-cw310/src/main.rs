@@ -3,10 +3,10 @@
 // https://github.com/rust-lang/rust/issues/62184.
 #![cfg_attr(not(doc), no_main)]
 
-use kernel::{capabilities, create_capability, static_init};
-use kernel::platform::mpu;
-use earlgrey_board_lib::{EarlGreyChip, ChipConfig};
+use earlgrey_board_lib::{ChipConfig, EarlGreyChip};
 use encapfn::rt::EncapfnRt;
+use kernel::platform::mpu;
+use kernel::{capabilities, create_capability, static_init};
 
 // Must only be constructed once, which is what we guarantee with the "unsafe impl" below:
 struct OtCryptoLibHMACID;
@@ -58,10 +58,9 @@ pub unsafe fn main() {
         // /// The start of the OpenTitan manifest
         // static _manifest: u8;
 
-	static _efram_start: u8;
+        static _efram_start: u8;
         static _efram_end: u32;
     }
-
 
     let (board_kernel, earlgrey, chip, _peripherals) = earlgrey_board_lib::start();
 
@@ -70,20 +69,17 @@ pub unsafe fn main() {
         "efotcrypto",
         core::slice::from_raw_parts(
             core::ptr::addr_of!(_sapps) as *const u8,
-            core::ptr::addr_of!(_eapps) as *const u8 as usize -
-		core::ptr::addr_of!(_sapps) as *const u8 as usize,
+            core::ptr::addr_of!(_eapps) as *const u8 as usize
+                - core::ptr::addr_of!(_sapps) as *const u8 as usize,
         ),
     )
-	.unwrap();
+    .unwrap();
 
     // Additional MPU regions to expose to the Encapsulated Function:
     let mpu_regions: [(mpu::Region, mpu::Permissions); 1] = [
         (
             // OpenTitan MMIO peripherals:
-            mpu::Region::new(
-		0x40000000 as *const _,
-                0x10000000,
-            ),
+            mpu::Region::new(0x40000000 as *const _, 0x10000000),
             mpu::Permissions::ReadWriteOnly,
         ),
         // (
@@ -104,7 +100,7 @@ pub unsafe fn main() {
             encapfn::types::AllocScope<
                 'static,
                 <OTEncapfnRt as EncapfnRt>::AllocTracker<'static>,
-                OtCryptoLibHMACID
+                OtCryptoLibHMACID,
             >,
             encapfn::types::AccessScope<OtCryptoLibHMACID>,
         ),
@@ -112,11 +108,11 @@ pub unsafe fn main() {
             kernel::platform::chip::Chip::mpu(chip),
             ef_cryptolib_binary,
             core::ptr::addr_of!(_efram_start) as *const () as *mut (),
-            core::ptr::addr_of!(_efram_end) as usize
-                - core::ptr::addr_of!(_efram_start) as usize,
-	    mpu_regions.into_iter(),
+            core::ptr::addr_of!(_efram_end) as usize - core::ptr::addr_of!(_efram_start) as usize,
+            mpu_regions.into_iter(),
             OtCryptoLibHMACID,
-        ).unwrap(),
+        )
+        .unwrap(),
     );
 
     let bound_rt = static_init!(
@@ -151,13 +147,18 @@ pub unsafe fn main() {
     );
 
     let hmac_bench = static_init!(
-        encapfn_example_otcrypto::hmac_bench::HmacBench<'static, 32, CryptolibHmacImpl, earlgrey::timer::RvTimer<'_, ChipConfig>>,
+        encapfn_example_otcrypto::hmac_bench::HmacBench<
+            'static,
+            32,
+            CryptolibHmacImpl,
+            earlgrey::timer::RvTimer<'_, ChipConfig>,
+        >,
         encapfn_example_otcrypto::hmac_bench::HmacBench::new(
             ot_cryptolib_hmac,
             &[42; 512],
             256,
             digest_buf,
-	    hardware_alarm,
+            hardware_alarm,
         ),
     );
     kernel::hil::digest::Digest::set_client(ot_cryptolib_hmac, hmac_bench);

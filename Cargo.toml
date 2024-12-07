@@ -5,6 +5,8 @@ members = [
     "examples/boards/qemu_rv32_virt",
     "examples/demo",
     "examples/otcrypto",
+    "examples/ubench",
+    "examples/ubench-boards/earlgrey-cw310",
 ]
 resolver = "2"
 

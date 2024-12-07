@@ -207,6 +207,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "encapfn-earlgrey-cw310-ubench"
+version = "0.1.0"
+dependencies = [
+ "earlgrey",
+ "earlgrey_board_lib",
+ "encapfn",
+ "encapfn-tock",
+ "encapfn-tock-ubench",
+ "kernel",
+ "tock_build_scripts",
+]
+
+[[package]]
 name = "encapfn-example-demo"
 version = "0.1.0"
 dependencies = [
@@ -234,6 +247,16 @@ dependencies = [
  "kernel",
  "rv32i",
  "tock-tbf",
+]
+
+[[package]]
+name = "encapfn-tock-ubench"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "cc",
+ "encapfn",
+ "kernel",
 ]
 
 [[package]]
