@@ -1614,11 +1614,16 @@ unsafe impl<ID: EFID, M: MPU + 'static> EncapfnRt for TockRv32iCRt<ID, M> {
         F: for<'b> FnOnce(*mut (), &'b mut AllocScope<'_, Self::AllocTracker<'_>, Self::ID>) -> R,
     {
         self.allocate_stacked_untracked_mut(layout, move |ptr| {
-            // We don't need to create a new `alloc_scope` or modify or current
-            // one -- we allocate our stack in the same memory that is usable by
-            // the foreign function for any other purpose. Hence, we only check
-            // whether this memory actually belongs to the process.
-            fun(ptr, alloc_scope)
+	    // We don't need to track this allocation separately. However, for
+	    // eval to be sensible and reflect the case where we actually move
+	    // allocations, place a Cons element on the alloc chain:
+	    let mut inner_alloc_scope: AllocScope<'_, TockRv32iCRtAllocChain<'_>, ID> = unsafe {
+		AllocScope::new(TockRv32iCRtAllocChain::Cons(alloc_scope.tracker()))
+	    };
+
+	    // The inner alloc scope will be popped from the stack once we leave
+	    // this closure:
+            fun(ptr, &mut inner_alloc_scope)
         })
     }
 }
