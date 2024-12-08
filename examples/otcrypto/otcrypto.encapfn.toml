@@ -20,3 +20,6 @@ fntab_id = 5
 
 [functions.entropy_complex_init]
 fntab_id = 6
+
+[functions.get_global_hmac_context_ptr]
+fntab_id = 7

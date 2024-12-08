@@ -12,7 +12,7 @@ use kernel::debug;
 
 use encapfn::branding::EFID;
 use encapfn::rt::EncapfnRt;
-use encapfn::types::{AccessScope, AllocScope, EFCopy, EFMutRef};
+use encapfn::types::{AccessScope, AllocScope, EFCopy, EFMutRef, EFPtr};
 
 use crate::libotcrypto_bindings::{self, LibOtCrypto};
 
@@ -22,7 +22,8 @@ pub struct OtCryptoLibHMAC<'l, ID: EFID, RT: EncapfnRt<ID = ID>, L: LibOtCrypto<
     lib: &'l L,
     alloc_scope: TakeCell<'l, AllocScope<'l, RT::AllocTracker<'l>, RT::ID>>,
     access_scope: TakeCell<'l, AccessScope<RT::ID>>,
-    hmac_context: RefCell<EFCopy<libotcrypto_bindings::otcrypto_hmac_context_t>>,
+    // hmac_context: RefCell<EFCopy<libotcrypto_bindings::otcrypto_hmac_context_t>>,
+    hmac_context: EFPtr<libotcrypto_bindings::otcrypto_hmac_context_t>,
     data_slice: OptionalCell<SubSlice<'static, u8>>,
     data_slice_mut: OptionalCell<SubSliceMut<'static, u8>>,
     digest_buf: TakeCell<'static, [u8; SHA_256_OUTPUT_LEN_BYTES]>,
@@ -38,11 +39,19 @@ impl<'l, ID: EFID, RT: EncapfnRt<ID = ID>, L: LibOtCrypto<ID, RT, RT = RT>>
         alloc_scope: &'l mut AllocScope<'l, RT::AllocTracker<'l>, RT::ID>,
         access_scope: &'l mut AccessScope<RT::ID>,
     ) -> Self {
+        let hmac_context = EFPtr::from(
+            lib.get_global_hmac_context_ptr(alloc_scope, access_scope)
+                .unwrap()
+                .validate()
+                .unwrap(),
+        );
+
         OtCryptoLibHMAC {
             lib,
             alloc_scope: TakeCell::new(alloc_scope),
             access_scope: TakeCell::new(access_scope),
-            hmac_context: RefCell::new(EFCopy::zeroed()),
+            // hmac_context: RefCell::new(EFCopy::zeroed()),
+            hmac_context,
             data_slice: OptionalCell::empty(),
             data_slice_mut: OptionalCell::empty(),
             digest_buf: TakeCell::empty(),
@@ -64,25 +73,30 @@ impl<'l, ID: EFID, RT: EncapfnRt<ID = ID>, L: LibOtCrypto<ID, RT, RT = RT>>
             EFMutRef<'_, ID, libotcrypto_bindings::otcrypto_hmac_context_t>,
         ) -> R,
     {
-        let mut stored_hmac_context = self.hmac_context.borrow_mut();
-        //debug!("Stored ctx pre: {:?}", &stored_hmac_context.validate_ref().unwrap());
-        let res = self
-            .lib
-            .rt()
-            .allocate_stacked_t_mut::<libotcrypto_bindings::otcrypto_hmac_context_t, _, _>(
-                alloc,
-                |stacked_context, alloc| {
-                    // Copy our copy of the context into the stacked context:
-                    stacked_context.write_copy(&*stored_hmac_context, access);
-                    let res = f(alloc, access, stacked_context);
-                    //debug!("Stacked ctx updated: {:p} {:?}", <_ as Into<*const _>>::into(stacked_context.as_ptr()), &*stacked_context.validate(access).unwrap());
-                    stored_hmac_context.update_from_mut_ref(stacked_context, access);
-                    res
-                },
-            )
-            .unwrap();
-        //debug!("Stored ctx post: {:?}", &stored_hmac_context.validate_ref().unwrap());
-        res
+        // For copied hmac_context:
+        // let mut stored_hmac_context = self.hmac_context.borrow_mut();
+        // //debug!("Stored ctx pre: {:?}", &stored_hmac_context.validate_ref().unwrap());
+        // let res = self
+        //     .lib
+        //     .rt()
+        //     .allocate_stacked_t_mut::<libotcrypto_bindings::otcrypto_hmac_context_t, _, _>(
+        //         alloc,
+        //         |stacked_context, alloc| {
+        //             // Copy our copy of the context into the stacked context:
+        //             stacked_context.write_copy(&*stored_hmac_context, access);
+        //             let res = f(alloc, access, stacked_context);
+        //             //debug!("Stacked ctx updated: {:p} {:?}", <_ as Into<*const _>>::into(stacked_context.as_ptr()), &*stacked_context.validate(access).unwrap());
+        //             stored_hmac_context.update_from_mut_ref(stacked_context, access);
+        //             res
+        //         },
+        //     )
+        //     .unwrap();
+        // //debug!("Stored ctx post: {:?}", &stored_hmac_context.validate_ref().unwrap());
+        // res
+
+        // For global static hmac_context:
+        let hmac_context_ref = self.hmac_context.upgrade_mut(alloc).unwrap();
+        f(alloc, access, hmac_context_ref)
     }
 
     fn add_data_int(&self, data: &[u8]) -> Result<(), ErrorCode> {

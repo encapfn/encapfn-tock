@@ -154,10 +154,12 @@ pub unsafe fn main() {
             earlgrey::timer::RvTimer<'_, ChipConfig>,
         >,
         encapfn_example_otcrypto::hmac_bench::HmacBench::new(
+            "TockRv32iCRt",
             ot_cryptolib_hmac,
             &[42; 512],
-            256,
+            8, // how many times to add the above buffer
             digest_buf,
+            100, // how many overall benchmark iterations
             hardware_alarm,
         ),
     );
