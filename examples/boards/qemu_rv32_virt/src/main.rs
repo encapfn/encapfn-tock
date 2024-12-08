@@ -50,7 +50,8 @@ pub unsafe fn main() {
         // foreign functions without memory protection:
         let (rt, mut alloc, mut access) = unsafe {
             encapfn::rt::mock::MockRt::new(
-                false,
+                false, // zero_copy_immutable
+		true, // all_upgrades_valid
                 encapfn::rt::mock::stack_alloc::StackAllocator::<
                     encapfn::rt::mock::stack_alloc::StackFrameAllocRiscv,
                 >::new(),
