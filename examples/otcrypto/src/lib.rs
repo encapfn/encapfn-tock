@@ -16,7 +16,7 @@ pub mod libotcrypto_bindings {
 pub mod ef_otcrypto_hmac;
 
 // pub mod ef_otcrypto_hmac_nocopy;
-// pub mod unsafe_otcrypto_hmac;
+pub mod unsafe_otcrypto_hmac;
 // pub mod unsafe_otcrypto_hmac_validate;
 
 pub mod hmac_bench;

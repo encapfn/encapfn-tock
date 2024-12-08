@@ -13,12 +13,12 @@ use encapfn::branding::EFID;
 use encapfn::rt::EncapfnRt;
 use encapfn::types::{AccessScope, AllocScope, EFCopy, EFMutRef};
 
-use crate::libotcrypto_bindings::{self, LibOTCryptoMAC};
+use crate::libotcrypto_bindings::{self, LibOtCrypto};
 
 const SHA_256_OUTPUT_LEN_BYTES: usize = 32;
 
-pub struct OTCryptoLibHMAC<'a> {
-    hmac_context: RefCell<libotcrypto_bindings::hmac_context_t>,
+pub struct OtCryptoLibHMAC<'a> {
+    hmac_context: RefCell<libotcrypto_bindings::otcrypto_hmac_context_t>,
     data_slice: OptionalCell<SubSlice<'static, u8>>,
     data_slice_mut: OptionalCell<SubSliceMut<'static, u8>>,
     digest_buf: TakeCell<'static, [u8; SHA_256_OUTPUT_LEN_BYTES]>,
@@ -26,15 +26,15 @@ pub struct OTCryptoLibHMAC<'a> {
     client: OptionalCell<&'a dyn digest::Client<SHA_256_OUTPUT_LEN_BYTES>>,
 }
 
-impl OTCryptoLibHMAC<'_> {
+impl OtCryptoLibHMAC<'_> {
     pub fn new() -> Self {
-        OTCryptoLibHMAC {
-            hmac_context: RefCell::new(libotcrypto_bindings::hmac_context_t {
-                inner: libotcrypto_bindings::hash_context_t {
+        OtCryptoLibHMAC {
+            hmac_context: RefCell::new(libotcrypto_bindings::otcrypto_hmac_context_t {
+                inner: libotcrypto_bindings::otcrypto_hash_context_t {
                     mode: 0,
                     data: [0; 52],
                 },
-                outer: libotcrypto_bindings::hash_context_t {
+                outer: libotcrypto_bindings::otcrypto_hash_context_t {
                     mode: 0,
                     data: [0; 52],
                 },
@@ -49,7 +49,7 @@ impl OTCryptoLibHMAC<'_> {
 
     fn with_hmac_context<R, F>(&self, f: F) -> R
     where
-        F: FnOnce(&mut libotcrypto_bindings::hmac_context_t) -> R,
+        F: FnOnce(&mut libotcrypto_bindings::otcrypto_hmac_context_t) -> R,
     {
         let mut stored_hmac_context = self.hmac_context.borrow_mut();
         f(&mut *stored_hmac_context)
@@ -57,7 +57,7 @@ impl OTCryptoLibHMAC<'_> {
 
     fn add_data_int(&self, data: &[u8]) -> Result<(), ErrorCode> {
         let res = self.with_hmac_context(|hmac_context| {
-            let msg_buf = libotcrypto_bindings::crypto_const_byte_buf_t {
+            let msg_buf = libotcrypto_bindings::otcrypto_const_byte_buf_t {
                 data: data.as_ptr(),
                 len: data.len(),
             };
@@ -72,7 +72,7 @@ impl OTCryptoLibHMAC<'_> {
 
 use kernel::deferred_call::DeferredCallClient;
 
-impl DeferredCallClient for OTCryptoLibHMAC<'_> {
+impl DeferredCallClient for OtCryptoLibHMAC<'_> {
     fn register(&'static self) {
         self.deferred_call.register(self);
     }
@@ -115,13 +115,13 @@ impl DeferredCallClient for OTCryptoLibHMAC<'_> {
 }
 
 // HMAC Driver
-impl<'a> digest::Digest<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OTCryptoLibHMAC<'a> {
+impl<'a> digest::Digest<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OtCryptoLibHMAC<'a> {
     fn set_client(&'a self, client: &'a dyn digest::Client<32>) {
         self.client.replace(client);
     }
 }
 
-impl<'a> digest::DigestData<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OTCryptoLibHMAC<'a> {
+impl<'a> digest::DigestData<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OtCryptoLibHMAC<'a> {
     fn set_data_client(&'a self, client: &'a dyn digest::ClientData<32>) {
         // we do not set a client for this (this is the lowest layer)
         // mirroring hmac.rs in `chips/lowrisc/src`
@@ -167,7 +167,7 @@ impl<'a> digest::DigestData<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OTCryptoLibHMA
     }
 }
 
-impl<'a> digest::DigestHash<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OTCryptoLibHMAC<'a> {
+impl<'a> digest::DigestHash<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OtCryptoLibHMAC<'a> {
     fn set_hash_client(&'a self, client: &'a dyn digest::ClientHash<32>) {
         // see comment for dataclient
         unimplemented!()
@@ -179,17 +179,12 @@ impl<'a> digest::DigestHash<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OTCryptoLibHMA
     ) -> Result<(), (ErrorCode, &'static mut [u8; 32])> {
         self.with_hmac_context(|hmac_context| {
             let mut tag_array = [0_u32; 256 / 32];
-            let mut tag_buf = libotcrypto_bindings::crypto_word32_buf_t {
+            let tag_buf = libotcrypto_bindings::otcrypto_word32_buf_t {
                 data: &mut tag_array as *mut [u32; 256 / 32] as *mut u32,
                 len: tag_array.len(),
             };
 
-            unsafe {
-                libotcrypto_bindings::otcrypto_hmac_final(
-                    hmac_context as *mut _,
-                    &mut tag_buf as *mut _,
-                )
-            };
+            unsafe { libotcrypto_bindings::otcrypto_hmac_final(hmac_context as *mut _, tag_buf) };
 
             // Copy the validated array's contents into the digest buffer,
             // converting the u32s to u8s in the process:
@@ -209,7 +204,7 @@ impl<'a> digest::DigestHash<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OTCryptoLibHMA
     }
 }
 
-impl<'a> digest::DigestVerify<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OTCryptoLibHMAC<'a> {
+impl<'a> digest::DigestVerify<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OtCryptoLibHMAC<'a> {
     fn set_verify_client(
         &'a self,
         client: &'a dyn digest::ClientVerify<{ SHA_256_OUTPUT_LEN_BYTES }>,
@@ -226,14 +221,16 @@ impl<'a> digest::DigestVerify<'a, { SHA_256_OUTPUT_LEN_BYTES }> for OTCryptoLibH
     }
 }
 
-impl<'a> digest::HmacSha256 for OTCryptoLibHMAC<'a> {
+impl<'a> digest::HmacSha256 for OtCryptoLibHMAC<'a> {
     fn set_mode_hmacsha256(&self, key: &[u8]) -> Result<(), ErrorCode> {
         assert!(key.len() == 32);
 
+        unsafe { libotcrypto_bindings::entropy_complex_init() };
+
         self.with_hmac_context(|hmac_context| {
-            let key_config_rust = libotcrypto_bindings::crypto_key_config {
-                version: libotcrypto_bindings::crypto_lib_version_kCryptoLibVersion1,
-                key_mode: libotcrypto_bindings::key_mode_kKeyModeHmacSha256,
+            let key_config_rust = libotcrypto_bindings::otcrypto_key_config {
+                version: libotcrypto_bindings::otcrypto_lib_version_kOtcryptoLibVersion1,
+                key_mode: libotcrypto_bindings::otcrypto_key_mode_kOtcryptoKeyModeHmacSha256,
                 key_length: 32, // HMAC-SHA256
                 hw_backed: libotcrypto_bindings::hardened_bool_kHardenedBoolFalse,
                 //diversification_hw_backed: libotcrypto_bindings::crypto_const_uint8_buf_t {
@@ -241,7 +238,8 @@ impl<'a> digest::HmacSha256 for OTCryptoLibHMAC<'a> {
                 //    len: 0,
                 //},
                 exportable: libotcrypto_bindings::hardened_bool_kHardenedBoolFalse,
-                security_level: libotcrypto_bindings::crypto_key_security_level_kSecurityLevelLow,
+                security_level:
+                    libotcrypto_bindings::otcrypto_key_security_level_kOtcryptoKeySecurityLevelLow,
             };
 
             //blinded_key_config.write(key_config_rust, &mut access);
@@ -282,7 +280,7 @@ impl<'a> digest::HmacSha256 for OTCryptoLibHMAC<'a> {
                 )
             };
 
-            let mut blinded_key = libotcrypto_bindings::crypto_blinded_key_t {
+            let mut blinded_key = libotcrypto_bindings::otcrypto_blinded_key_t {
                 config: key_config_rust,
                 keyblob: &mut keyblob as *mut _ as *mut _,
                 keyblob_length: keyblob_words * core::mem::size_of::<u32>(),
@@ -315,13 +313,13 @@ impl<'a> digest::HmacSha256 for OTCryptoLibHMAC<'a> {
     }
 }
 
-impl<'a> digest::HmacSha384 for OTCryptoLibHMAC<'a> {
+impl<'a> digest::HmacSha384 for OtCryptoLibHMAC<'a> {
     fn set_mode_hmacsha384(&self, key: &[u8]) -> Result<(), ErrorCode> {
         unimplemented!()
     }
 }
 
-impl<'a> digest::HmacSha512 for OTCryptoLibHMAC<'a> {
+impl<'a> digest::HmacSha512 for OtCryptoLibHMAC<'a> {
     fn set_mode_hmacsha512(&self, key: &[u8]) -> Result<(), ErrorCode> {
         unimplemented!()
     }
