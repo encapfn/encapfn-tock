@@ -21,7 +21,6 @@ encapfn-example-otcrypto = { path = "../../otcrypto" }
 [build-dependencies]
 tock_build_scripts.workspace = true
 
-
 [features]
 default = ["fpga_cw310"]
 
@@ -42,3 +41,8 @@ sim_verilator = ["earlgrey_board_lib/sim_verilator"]
 # This is used to indicate that we should include tests that only pass on
 # hardware.
 hardware_tests = ["earlgrey_board_lib/hardware_tests"]
+
+# Omniglot Eval Parameters:
+og_eval_unsafe = []
+og_eval_isolation_only = ["encapfn/disable_validation_checks", "encapfn/disable_upgrade_checks"]
+og_eval_full = []

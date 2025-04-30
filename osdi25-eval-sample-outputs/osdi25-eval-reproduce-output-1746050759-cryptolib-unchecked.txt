@@ -1,0 +1,16 @@
+00001 test_rom.c:158] kChipInfo: scm_revision=54697461
+I00002 test_rom.c:184] TestROM:80004bf9
+I00003 test_rom.c:190] Boot strap requested
+I00001 test_rom.c:158] kChipInfo: scm_revision=54697461
+I00002 test_rom.c:184] TestROM:80004bf9
+I00003 test_rom.c:230] Test ROM complete, jumping to flash (addr: 20000400)!
+Unable to find otbn-rsa, disabling RSA support
+Loading processes from flash=0x20030000-0x2008FFFF into sram=0x100056AC-0x1000FFFF
+Looking for process binary in flash=0x20030000-0x2008FFFF
+Process not enabled flash=0x20030000-0x2003713B process="efotcrypto"
+Unable to use process binary: Process marked not enabled.
+Looking for process binary in flash=0x2003713C-0x2008FFFF
+No more processes to load: Could not find TBF header.
+OpenTitan initialisation complete. Entering main loop
+OGBENCH[IsolationOnly ELEMS=(512, 8)]: TICKS=9143 US=914300 ITERS=100 TICKSPERITER=91.43 USPERITER=9143
+-ogbenchdone-

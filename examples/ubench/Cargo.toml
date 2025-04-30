@@ -11,4 +11,5 @@ cc = "1.0.90"
 [dependencies]
 kernel.workspace = true
 encapfn.workspace = true
+encapfn-tock.path = "../../encapfn-tock" # only used for the print_ogbench_results helper
 

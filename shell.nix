@@ -92,6 +92,9 @@ in
 
       # Add "segger-jlink" to your system packages and accept the EULA:
       # nixpkgs.config.segger-jlink.acceptLicense = true;
+      
+      # Packages for the OSDI'25 eval reproduction pure nix-shell:
+      which envsubst wget cacert perl
     ];
 
     LD_LIBRARY_PATH="${stdenv.cc.cc.lib}/lib64:$LD_LIBRARY_PATH";

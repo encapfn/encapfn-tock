@@ -1,0 +1,52 @@
+wrapper_name = "LibLittleFS"
+
+[functions.lfs_mount]
+fntab_id = 0
+
+[functions.lfs_file_opencfg]
+fntab_id = 1
+
+[functions.lfs_file_read]
+fntab_id = 2
+
+[functions.lfs_file_rewind]
+fntab_id = 3
+
+[functions.lfs_file_write]
+fntab_id = 4
+
+[functions.lfs_unmount]
+fntab_id = 5
+
+[functions.lfs_format]
+fntab_id = 6
+
+[functions.read]
+fntab_id = 7
+
+[functions.prog]
+fntab_id = 8
+
+[functions.erase]
+fntab_id = 9
+
+[functions.sync]
+fntab_id = 10
+
+[functions.getFilledCFG]
+fntab_id = 11
+
+[functions.getFileConfigBufferAddr]
+fntab_id = 12
+
+[functions.getEmptyFilesystem]
+fntab_id = 13
+
+[functions.getEmptyFileType]
+fntab_id = 14
+
+[functions.lfs_remove]
+fntab_id = 15
+
+[functions.lfs_file_close]
+fntab_id = 16

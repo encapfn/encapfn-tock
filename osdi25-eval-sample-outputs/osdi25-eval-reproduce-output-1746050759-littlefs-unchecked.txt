@@ -1,0 +1,24 @@
+I00001 test_rom.c:158] kChipInfo: scm_revision=54697461
+I00002 test_rom.c:184] TestROM:80004bf9
+I00003 test_rom.c:190] Boot strap requested
+I0I00001 test_rom.c:158] kChipInfo: scm_revision=54697461
+I00002 test_rom.c:184] TestROM:80004bf9
+I00003 test_rom.c:230] Test ROM complete, jumping to flash (addr: 20000400)!
+
+---| Debug buffer not empty. Flushing. May repeat some of last message(s):
+Loading processes from flash=0x20030000-0x2008FFFF into sram=0x1000769C-0x1000FFFF
+Looking for process binary in flash=0x20030000-0x2008FFFF
+Process not enabled flash=0x20030000-0x20037A77 process="ef_littlefs"
+Unable to use process binary: Process marked not enabled.
+Looking for process binary in flash=0x20037A78-0x2008FFFF
+No more processes to load: Could not find TBF header.
+OpenTitan initialisation complete. Entering main loop
+in littlefs library
+OGBENCH[ef_mock_unchecked ELEMS=1024]: TICKS=31159 US=3115900 ITERS=1000 TICKSPERITER=31.159 USPERITER=3115.9
+in littlefs library
+OGBENCH[ef_mpk_unchecked ELEMS=1024]: TICKS=37414 US=3741400 ITERS=1000 TICKSPERITER=37.414 USPERITER=3741.4
+
+---| No debug queue found. You can set it with the DebugQueue component.
+
+panicked at examples/littlefs-boards/earlgrey-cw310/src/main.rs:95:5:
+-ogbenchdone-

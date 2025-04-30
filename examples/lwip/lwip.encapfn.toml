@@ -1,0 +1,46 @@
+wrapper_name = "LibLwip"
+
+[functions.lwip_init]
+fntab_id = 0
+
+[functions.netif_add]
+fntab_id = 1
+
+[functions.netif_get_by_index]
+fntab_id = 2
+
+[functions.netif_input]
+fntab_id = 3
+
+[functions.netif_set_default]
+fntab_id = 4
+
+[functions.netif_set_up]
+fntab_id = 5
+
+[functions.pbuf_alloc]
+fntab_id = 6
+
+[functions.pbuf_take]
+fntab_id = 7
+
+[functions.dhcp_start]
+fntab_id = 8
+
+[functions.sys_check_timeouts]
+fntab_id = 9
+
+[functions.make_ip_addr_t]
+fntab_id = 10
+
+[functions.etharp_add_static_entry]
+fntab_id = 11
+
+[functions.make_ip4_addr_t]
+fntab_id = 12
+
+[functions.netif_set_link_up]
+fntab_id = 13
+
+[functions.etharp_output]
+fntab_id = 14

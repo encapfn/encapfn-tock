@@ -24,6 +24,28 @@ mod constants {
 
 use libdemo::LibDemo;
 
+pub fn print_result<T: Time>(
+    label: &str,
+    elements: Option<usize>,
+    measurement: (usize, T::Ticks, T::Ticks),
+    time: &T,
+) {
+    let (iters, start, end) = measurement;
+    assert!(end > start);
+    let ticks = end.wrapping_sub(start);
+    let us = time.ticks_to_us(ticks);
+    kernel::debug!(
+        "[{}({:?})]: {:?} ticks ({} us) for {} iters, {} ticks / iter, {} us / iter",
+        label,
+        elements,
+        ticks,
+        us,
+        iters,
+        (ticks.into_u32() as f32) / iters as f32,
+        (us as f32) / iters as f32
+    );
+}
+
 #[inline(always)]
 pub fn bench_args_ef<
     const ARG_COUNT: usize,
@@ -90,28 +112,6 @@ pub fn bench_invoke_unsafe<T: Time>(time: &T, iters: usize) -> (usize, T::Ticks,
     (iters, start, end)
 }
 
-pub fn print_result<T: Time>(
-    label: &str,
-    elements: Option<usize>,
-    measurement: (usize, T::Ticks, T::Ticks),
-    time: &T,
-) {
-    let (iters, start, end) = measurement;
-    assert!(end > start);
-    let ticks = end.wrapping_sub(start);
-    let us = time.ticks_to_us(ticks);
-    kernel::debug!(
-        "[{}({:?})]: {:?} ticks ({} us) for {} iters, {} ticks / iter, {} us / iter",
-        label,
-        elements,
-        ticks,
-        us,
-        iters,
-        (ticks.into_u32() as f32) / iters as f32,
-        (us as f32) / iters as f32
-    );
-}
-
 #[inline(never)]
 pub fn run_ubench_invoke<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT, RT = RT>, T: Time>(
     lib: &L,
@@ -140,9 +140,9 @@ pub fn run_ubench_invoke<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT, RT
         true,
         &mut pmp_request_reconfiguration,
     );
-    print_result("invoke_unsafe", None, invoke_unsafe, time);
-    print_result("invoke_ef_cold", None, invoke_ef_cold, time);
-    print_result("invoke_ef_warm", None, invoke_ef_warm, time);
+    encapfn_tock::print_ogbench_result("invoke_unsafe", None::<()>, invoke_unsafe, time);
+    encapfn_tock::print_ogbench_result("invoke_ef_cold", None::<()>, invoke_ef_cold, time);
+    encapfn_tock::print_ogbench_result("invoke_ef_warm", None::<()>, invoke_ef_warm, time);
 }
 
 #[inline(never)]
@@ -234,7 +234,7 @@ pub fn run_ubench_validate_bytes<
     }
 
     for (size, res) in benchmarks.into_iter() {
-        print_result("validate_bytes({})", Some(size), res.unwrap(), time);
+        encapfn_tock::print_ogbench_result("validate_bytes", Some(size), res.unwrap(), time);
     }
 }
 
@@ -270,7 +270,7 @@ pub fn run_ubench_validate_str<
     }
 
     for (size, res) in benchmarks.into_iter() {
-        print_result("validate_str({})", Some(size), res.unwrap(), time);
+        encapfn_tock::print_ogbench_result("validate_str", Some(size), res.unwrap(), time);
     }
 }
 
@@ -467,9 +467,9 @@ pub fn run_ubench_upgrade<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT, R
     })
     }).unwrap();
 
-    print_result("upgrade", Some(1), bench_upgrade_res_1.unwrap(), time);
-    print_result("upgrade", Some(8), bench_upgrade_res_8.unwrap(), time);
-    print_result("upgrade", Some(64), bench_upgrade_res_64.unwrap(), time);
+    encapfn_tock::print_ogbench_result("upgrade", Some(1), bench_upgrade_res_1.unwrap(), time);
+    encapfn_tock::print_ogbench_result("upgrade", Some(8), bench_upgrade_res_8.unwrap(), time);
+    encapfn_tock::print_ogbench_result("upgrade", Some(64), bench_upgrade_res_64.unwrap(), time);
 }
 
 #[inline(never)]
@@ -667,7 +667,7 @@ pub fn run_ubench_callback<ID: EFID, RT: EncapfnRt<ID = ID>, L: LibDemo<ID, RT, 
     })
     }).unwrap();
 
-    print_result("callback", Some(1), bench_callback_res_1.unwrap(), time);
-    print_result("callback", Some(8), bench_callback_res_8.unwrap(), time);
-    print_result("callback", Some(64), bench_callback_res_64.unwrap(), time);
+    encapfn_tock::print_ogbench_result("callback", Some(1), bench_callback_res_1.unwrap(), time);
+    encapfn_tock::print_ogbench_result("callback", Some(8), bench_callback_res_8.unwrap(), time);
+    encapfn_tock::print_ogbench_result("callback", Some(64), bench_callback_res_64.unwrap(), time);
 }

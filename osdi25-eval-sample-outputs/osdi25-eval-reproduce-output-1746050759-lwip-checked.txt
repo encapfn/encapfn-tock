@@ -1,0 +1,36 @@
+I00001 test_rom.c:158] kChipInfo: scm_revision=54697461
+I00002 test_rom.c:184] TestROM:80004bf9
+I00003 test_rom.c:190] Boot strap requested
+I00001 test_rom.c:158] kChipInfo: scm_revision=54697461
+I00002 test_rom.c:184] TestROM:80004bf9
+I00003 test_rom.c:230] Test ROM complete, jumping to flash (addr: 20000400)!
+
+---| Debug buffer not empty. Flushing. May repeat some of last message(s):
+Loading processes from flash=0x20030000-0x2008FFFF into sram=0x1000BF20-0x1000FFFF
+Looking for process binary in flash=0x20030000-0x2008FFFF
+Process not enabled flash=0x20030000-0x20044977 process="ef_lwip"
+Unable to use process binary: Process marked not enabled.
+Looking for process binary in flash=0x20044978-0x2008FFFF
+No more processes to load: Could not find TBF header.
+OpenTitan initialisation complete. Entering main loop
+Adding netif: 0x1000182c
+Called netif_init callback!
+netif_add result: Ok(0x1000182c)
+netif_set_default Ok(())
+netif_set_up Ok(())
+netif_set_link_up Ok(())
+Add static arp entry result: Ok(0)
+OGBENCH[ef_mock_checked]: TICKS=5705 US=570500 ITERS=10000 TICKSPERITER=0.5705 USPERITER=57.05
+Adding netif: 0x10011efc
+Called netif_init callback!
+netif_add result: Ok(0x10011efc)
+netif_set_default Ok(())
+netif_set_up Ok(())
+netif_set_link_up Ok(())
+Add static arp entry result: Ok(0)
+OGBENCH[ef_mpk_checked]: TICKS=8210 US=821000 ITERS=10000 TICKSPERITER=0.821 USPERITER=82.1
+
+---| No debug queue found. You can set it with the DebugQueue component.
+
+panicked at examples/lwip-boards/earlgrey-cw310/src/main.rs:117:5:
+-ogbenchdone-

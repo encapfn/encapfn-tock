@@ -20,7 +20,7 @@ foreign-libs: $(EF_TOCK_BASEDIR)/../examples/ubench/build/earlgrey-cw310_ef_uben
 
 .PHONY: $(EF_TOCK_BASEDIR)/../target/riscv32imc-unknown-none-elf/release/encapfn-earlgrey-cw310-ubench
 $(EF_TOCK_BASEDIR)/../target/riscv32imc-unknown-none-elf/release/encapfn-earlgrey-cw310-ubench:
-	EF_BINDGEN_CFLAGS="$(CFLAGS)" cargo build --release
+	EF_BINDGEN_CFLAGS="$(CFLAGS)" cargo build --release --features="$(FEATURES)"
 
 $(EF_TOCK_BASEDIR)/../target/riscv32imc-unknown-none-elf/release/encapfn-earlgrey-cw310-ubench.bin: $(EF_TOCK_BASEDIR)/../target/riscv32imc-unknown-none-elf/release/encapfn-earlgrey-cw310-ubench
 	riscv32-none-elf-objcopy --output-target=binary $< $@

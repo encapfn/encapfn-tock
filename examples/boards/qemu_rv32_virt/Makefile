@@ -1,23 +1,25 @@
 EF_TOCK_BASEDIR := $(shell pwd)/../../../encapfn-tock
-EF_BIN_NAME     := efdemo
+EF_BIN_NAME     := ef_littlefs
 EF_ARCH         := rv32imac
 EF_LAYOUT_LD    := $(shell pwd)/ef_layout.ld
 EF_TARGET       := qemu_rv32_virt
-
-include $(EF_TOCK_BASEDIR)/encapfn_c_rt/Configuration.mk
+EF_CFLAGS       := -I$(shell readlink -f $(EF_TOCK_BASEDIR)/../third-party/littlefs)
 
 .PHONY: all
 all: run
 
-.PHONY: ../../demo/build/qemu_rv32_virt_efdemo.tbf
-../../demo/build/qemu_rv32_virt_efdemo.tbf:
-	make -C ../../demo/ EF_LAYOUT_LD=$(EF_LAYOUT_LD) EF_TARGET=$(EF_TARGET) EF_ARCH=$(EF_ARCH)
+.PHONY: ../../lwip/build/qemu_rv32_virt_eflwip.tbf
+../../lwip/build/qemu_rv32_virt_eflwip.tbf:
+	make -C ../../lwip/ EF_LAYOUT_LD=$(EF_LAYOUT_LD) EF_TARGET=$(EF_TARGET) EF_ARCH=$(EF_ARCH)
 
-foreign-libs: ../../demo/build/qemu_rv32_virt_efdemo.tbf
+foreign-libs: ../../lwip/build/qemu_rv32_virt_eflwip.tbf
+
+.PHONY: build
+build: ../../lwip/build/qemu_rv32_virt_eflwip.tbf
+	EF_BINDGEN_CFLAGS="$(CFLAGS)" cargo build --release
 
 .PHONY: run
-run: ../../demo/build/qemu_rv32_virt_efdemo.tbf
-	EF_BINDGEN_CFLAGS="$(CFLAGS)" cargo build --release
+run: build
 	qemu-system-riscv32 \
 	  -machine virt \
 	  -semihosting \
@@ -28,9 +30,9 @@ run: ../../demo/build/qemu_rv32_virt_efdemo.tbf
 	  -device virtio-net-device,netdev=n0 \
 	  -nographic \
 	  -bios ../../../target/riscv32imac-unknown-none-elf/release/encapfn-demo-qemu_rv32_virt \
-	  -device loader,file=../../demo/build/qemu_rv32_virt_efdemo.tbf,addr=0x80100000
+	  -device loader,file=../../lwip/build/qemu_rv32_virt_eflwip.tbf,addr=0x80100000
 
 .PHONY: clean
 clean:
 	cargo clean
-	make -C ../../demo/ EF_LAYOUT_LD=$(EF_LAYOUT_LD) EF_TARGET=$(EF_TARGET) EF_ARCH=$(EF_ARCH) clean
+	make -C ../../littlefs/ EF_LAYOUT_LD=$(EF_LAYOUT_LD) EF_TARGET=$(EF_TARGET) EF_ARCH=$(EF_ARCH) clean

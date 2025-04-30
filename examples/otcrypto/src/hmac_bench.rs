@@ -87,12 +87,13 @@ impl<'a, const L: usize, H: digest::Digest<'a, L> + digest::HmacSha256, T: Time>
             self.start();
         } else {
             let end = self.time.now();
-            print_result(
+            encapfn_tock::print_ogbench_result(
                 self.label,
                 Some((self.data_slice.len(), self.add_data_cnt.get())),
                 (self.iters, self.start_time.get().unwrap(), end),
                 self.time,
             );
+            debug!("-ogbenchdone-");
         }
     }
 

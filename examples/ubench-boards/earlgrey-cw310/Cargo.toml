@@ -42,3 +42,9 @@ sim_verilator = ["earlgrey_board_lib/sim_verilator"]
 # This is used to indicate that we should include tests that only pass on
 # hardware.
 hardware_tests = ["earlgrey_board_lib/hardware_tests"]
+
+og_eval_ubench_invoke = []
+og_eval_ubench_validate = []
+og_eval_ubench_upgrade = []
+og_eval_ubench_callback = []
+og_eval_ubench_setup = []

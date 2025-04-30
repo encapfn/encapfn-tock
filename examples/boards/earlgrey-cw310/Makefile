@@ -19,7 +19,7 @@ foreign-libs: $(EF_TOCK_BASEDIR)/../examples/otcrypto/build/earlgrey-cw310_efotc
 
 .PHONY: $(EF_TOCK_BASEDIR)/../target/riscv32imc-unknown-none-elf/release/encapfn-earlgrey-cw310
 $(EF_TOCK_BASEDIR)/../target/riscv32imc-unknown-none-elf/release/encapfn-earlgrey-cw310: $(EF_TOCK_BASEDIR)/../third-party/opentitan-cryptolib/libotcrypto.a
-	EF_BINDGEN_CFLAGS="$(CFLAGS)" cargo build --release
+	EF_BINDGEN_CFLAGS="$(CFLAGS)" cargo build --release --features "$(FEATURES)"
 
 $(EF_TOCK_BASEDIR)/../target/riscv32imc-unknown-none-elf/release/encapfn-earlgrey-cw310.bin: $(EF_TOCK_BASEDIR)/../target/riscv32imc-unknown-none-elf/release/encapfn-earlgrey-cw310
 	riscv32-none-elf-objcopy --output-target=binary $< $@

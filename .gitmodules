@@ -1,3 +1,7 @@
 [submodule "libtock-c"]
 	path = third-party/libtock-c
 	url = https://github.com/tock/libtock-c.git
+[submodule "third-party/littlefs"]
+	path = third-party/littlefs
+	url = https://github.com/encapfn/littlefs
+	branch = dev/encapfn-wip
